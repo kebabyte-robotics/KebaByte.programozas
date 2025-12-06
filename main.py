@@ -35,6 +35,7 @@ def futas_4():
     while True:
         hub.speaker.beep()
         wait(500)
+        #átírom
  
 jel_futas= 1
 futasok = [futas_1, futas_2, futas_3, futas_4]
