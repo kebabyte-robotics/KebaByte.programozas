@@ -23,7 +23,7 @@ def futas_1():
 def futas_2():
     while True:
         db.turn(100)
-
+        # én meg ezt írom át
  
 def futas_3():
     while True:
