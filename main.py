@@ -18,18 +18,15 @@ def futas_1():
     while True:
         db.straight(100)
         db.straight(-100)
-        #ezt átírom
  
 def futas_2():
     while True:
         db.turn(100)
-        # én meg ezt írom át
  
 def futas_3():
     while True:
         hub.light.on(Color.ORANGE)
         wait(500)
-        #átírom
  
 def futas_4():
     while True:
