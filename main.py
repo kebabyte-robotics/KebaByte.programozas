@@ -18,6 +18,7 @@ def futas_1():
     while True:
         db.straight(100)
         db.straight(-100)
+        
  
 def futas_2():
     while True:
