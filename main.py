@@ -18,7 +18,7 @@ def futas_1():
     while True:
         db.straight(100)
         db.straight(-100)
-
+        #ezt átírom
  
 def futas_2():
     while True:
@@ -45,11 +45,11 @@ while True:
     megnyomva = []
  
     while not any(jel_megnyomva):
-        jel_megnyomva= hub.buttons.pressed()
-        megnyomva = hub.buttons.pressed()
+        jel_megnyomva = hub.buttons.pressed()
+        megnyomva = jel_megnyomva
        
     while any(jel_megnyomva):
-        jel_megnyomva= hub.buttons.pressed()
+        jel_megnyomva = hub.buttons.pressed()
    
     if Button.CENTER in megnyomva:
         futasok[jel_futas - 1]()
