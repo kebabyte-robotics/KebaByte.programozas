@@ -29,6 +29,7 @@ def futas_3():
     while True:
         hub.light.on(Color.ORANGE)
         wait(500)
+        #átírom
  
 def futas_4():
     while True:
