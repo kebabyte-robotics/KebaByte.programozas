@@ -62,5 +62,3 @@ while True:
  
     elif Button.BLUETOOTH in megnyomva:
         break
-
-    
