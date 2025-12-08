@@ -18,31 +18,30 @@ db.settings(
 )
 hub.system.set_stop_button(Button.BLUETOOTH) #beállítja a stopgombot a bluetooth gombra
  
-def futas_1():
+def futas_0():
     while True:
         db.straight(100)
         db.straight(-100)
  
-def futas_2():
+def futas_1():
     while True:
         db.turn(100)
  
-def futas_3():
+def futas_2():
     while True:
         hub.light.on(Color.ORANGE)
         wait(500)
  
-def futas_4():
+def futas_3():
     while True:
         hub.speaker.beep()
         wait(500)
  
-futas= 1
-futasok = [futas_1, futas_2, futas_3, futas_4]
+futas = 0
+futasok = [futas_0, futas_1, futas_2, futas_3]
  
 while True:
-    hub.display.off()
-    hub.display.number(futas)
+    hub.display.number(futas + 1)
     megnyomva= []
  
     while not any(megnyomva):
@@ -52,15 +51,15 @@ while True:
         pass
    
     if Button.CENTER in megnyomva:
-        futasok[futas - 1]()
-        futas = futas % 4 + 1
+        futasok[futas]()
+        futas = (futas + 1) % 4
  
  
     elif Button.RIGHT in megnyomva:
-        futas = futas % 4 + 1
+        futas = (futas + 1) % 4
  
     elif Button.LEFT in megnyomva:
-        futas = (futas - 2) % 4 + 1
+        futas = (futas - 1) % 4
  
     if Button.BLUETOOTH in megnyomva:
         break
