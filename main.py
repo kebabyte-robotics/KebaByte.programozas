@@ -9,9 +9,13 @@ motorB = Motor(Port.E, Direction.COUNTERCLOCKWISE) #elnevezzük a Motort nagy_mo
 motorJ = Motor(Port.A) #elnevezzük a Motort nagy_motorJ változóra port, (irány nem kell ha CLOCKWISE)
 kerek_motorJ = Motor(Port.F, Direction.COUNTERCLOCKWISE) #port, irány
 kerek_motorB = Motor(Port.B) #nem kell irány ha clockwise
-db = DriveBase(kerek_motorB, kerek_motorJ, 56, 87.5)   #bal, jobb, wheeldiameter, axle track
-db.settings(390, 1466, 426, 1920) #straight speed, straight acceleration, turn speed, turn acceleration
-hub.system.set_stop_button(None) #beállítja a stopgombot semelyikre
+db = DriveBase(kerek_motorB, kerek_motorJ, wheel_diameter=56, axle_track=87.5)   #bal, jobb, wheeldiameter, axle track
+db.settings(
+    straight_speed=390,
+    straight_acceleration=1466,
+    turn_speed=426,
+    turn_acceleration=1920
+)
 hub.system.set_stop_button(Button.BLUETOOTH) #beállítja a stopgombot a bluetooth gombra
  
 def futas_1():
@@ -33,32 +37,30 @@ def futas_4():
         hub.speaker.beep()
         wait(500)
  
-jel_futas= 1
+futas= 1
 futasok = [futas_1, futas_2, futas_3, futas_4]
  
 while True:
     hub.display.off()
-    hub.display.number(jel_futas)
-    jel_megnyomva= []
-    megnyomva = []
+    hub.display.number(futas)
+    megnyomva= []
  
-    while not any(jel_megnyomva):
-        jel_megnyomva = hub.buttons.pressed()
-        megnyomva = jel_megnyomva
+    while not any(megnyomva):
+        megnyomva = hub.buttons.pressed()
        
-    while any(jel_megnyomva):
-        jel_megnyomva = hub.buttons.pressed()
+    while hub.buttons.pressed():
+        pass
    
     if Button.CENTER in megnyomva:
-        futasok[jel_futas - 1]()
-        jel_futas = jel_futas % 4 + 1
+        futasok[futas - 1]()
+        futas = futas % 4 + 1
  
  
     elif Button.RIGHT in megnyomva:
-        jel_futas = jel_futas % 4 + 1
+        futas = futas % 4 + 1
  
     elif Button.LEFT in megnyomva:
-        jel_futas = (jel_futas - 2) % 4 + 1
+        futas = (futas - 2) % 4 + 1
  
     elif Button.BLUETOOTH in megnyomva:
         break
