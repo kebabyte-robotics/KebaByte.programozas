@@ -54,7 +54,6 @@ while True:
         futasok[futas]()
         futas = (futas + 1) % 4
  
- 
     elif Button.RIGHT in megnyomva:
         futas = (futas + 1) % 4
  
