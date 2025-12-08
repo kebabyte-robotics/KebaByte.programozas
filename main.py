@@ -62,5 +62,5 @@ while True:
     elif Button.LEFT in megnyomva:
         futas = (futas - 2) % 4 + 1
  
-    elif Button.BLUETOOTH in megnyomva:
+    if Button.BLUETOOTH in megnyomva:
         break
