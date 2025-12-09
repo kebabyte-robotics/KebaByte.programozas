@@ -104,7 +104,6 @@ def futas_3():
     while True:
         hub.speaker.beep()
         wait(500)
-        #én meg ezt írom át
  
 futas = 0
 futasok = [futas_0, futas_1, futas_2, futas_3]
