@@ -65,8 +65,27 @@ def backward(tavolsag, legkisebb_sebesseg, maximalis_sebesseg):
         kerek_motorB.run(-aktualis_sebesseg + korrekcio)  #lelassít a korekcióval, minusz mert hátra megy
         kerek_motorJ.run(-aktualis_sebesseg - korrekcio) #gyorsít a korekcióval, minusz mert előre megy
         if atlag_fok >= cel_fok: #azért >=, mert lehet negyed fokkal több
-            break            # kilép a ciklusból  
- 
+            break            #kilép a ciklusból  
+def turn(szog, max_sebesseg=300, min_sebesseg=80, ero=4):
+    hub.imu.reset_heading(0)  #gyro foka legyen 0, ez adja az eltérést
+    while True: #örök ciklus amig nem breakelünk
+        aktualis_szog = hub.imu.heading()   #a mostani szög legyen egyenlő a gyroval
+        szog_tavolsag = szog - aktualis_szog   #mennyire vagyunk még messze a céltól
+        if abs(szog_tavolsag) < 0.5:  #ha fél foknál közelebb van
+            break   #lépjen ki
+        # arányos lassítás a célhoz közeledve
+        sebesseg = abs(szog_tavolsag) * ero #a sebesség legyen a szögtávolság*erővel pl 1 fok akkor 1*4=4
+        if sebesseg > max_sebesseg: #ha sebesség nagyobb mint max sebesség 
+            sebesseg = max_sebesseg #sebesség legyen max sebesség
+        if sebesseg < min_sebesseg: #ha sebesség kisebb mint min sebesség
+            sebesseg = min_sebesseg #legyen sebesség min sebesség
+        if szog_tavolsag > 0: #ha pozitiv a szög távolság, jobbra
+            kerek_motorB.run(-sebesseg) #jobbra, -sebesség
+            kerek_motorJ.run(sebesseg) #jobbra, sebesség
+        else: #ha negativ a szög távolság, balra
+            kerek_motorB.run(sebesseg) #balra, sebesség
+            kerek_motorJ.run(-sebesseg) #balra, -sebesség
+
 def futas_0():
     while True:
         db.straight(100)
