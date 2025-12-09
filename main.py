@@ -25,12 +25,11 @@ egyenes_ero = 5.6 #milyen erősen reagáljon az eltérésre: pl 2 fok az 2*5,6/2
 GYRO_TOLERANCE = 0.5
 
 def sign(check):
-    if check >= 0:
-        return 1
-    elif check == 0:
-        return 0
-    elif check <= 0:
-        return -1
+    if type(check) == type(3):
+        if check == 0:
+            return 0
+        else:
+            return check/abs(check)
     else:
         return None
         
