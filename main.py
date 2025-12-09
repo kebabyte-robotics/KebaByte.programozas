@@ -24,9 +24,16 @@ kerek_kerulet = pi * KEREK_ATMERO     #a kerékkerületét kiszámítjuk, hogy f
 egyenes_ero = 5.6 #milyen erősen reagáljon az eltérésre: pl 2 fok az 2*5,6/2=5,6az egyik motor nagyobb másik kisebb                 
 GYRO_TOLERANCE = 0.5
 
-def sign():
-    #poz neg vagy nulla
-    pass
+def sign(check):
+    if check >= 0:
+        return 1
+    elif check == 0:
+        return 0
+    elif check <= 0:
+        return -1
+    else:
+        return None
+        
 
 def g_angle(angle = hub.imu.heading()):
     return ((angle + 180)%360)-180
