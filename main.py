@@ -90,6 +90,7 @@ def futas_0():
     while True:
         db.straight(100)
         db.straight(-100)
+        #ezt átírom
  
 def futas_1():
     while True:
