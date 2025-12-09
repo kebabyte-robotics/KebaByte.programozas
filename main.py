@@ -120,13 +120,13 @@ while True:
    
     if Button.CENTER in megnyomva:
         futasok[futas]()
-        futas = (futas + 1) % len(futasok)
+        futas = (futas + 1) % 4
  
     elif Button.RIGHT in megnyomva:
-        futas = (futas + 1) % len(futasok)
+        futas = (futas + 1) % 4
  
     elif Button.LEFT in megnyomva:
-        futas = (futas - 1) % len(futasok)
+        futas = (futas - 1) % 4
  
     if Button.BLUETOOTH in megnyomva:
         break
