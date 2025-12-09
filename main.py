@@ -18,15 +18,30 @@ db.settings(
     turn_acceleration=1920
 )
 hub.system.set_stop_button(Button.BLUETOOTH) #beállítja a stopgombot a bluetooth gombra
-kerek_atmero = 43.2 #kerék átmérője                     
-kerek_kerulet = pi * kerek_atmero  #a kerékkerületét kiszámítjuk, hogy fok->mm pi*kerék átmérő
-egyenes_ero = 5.6 #milyen erősen reagáljon az eltérésre: pl 2 fok az 2*5,6/2=5,6az egyik motor nagyobb másik kisebb                                      
-def forward(tavolsag, legkisebb_sebesseg, maximalis_sebesseg): 
+
+KEREK_ATMERO = 43.2 #kerék átmérője                     
+kerek_kerulet = pi * KEREK_ATMERO     #a kerékkerületét kiszámítjuk, hogy fok->mm pi*kerék átmérő
+egyenes_ero = 5.6 #milyen erősen reagáljon az eltérésre: pl 2 fok az 2*5,6/2=5,6az egyik motor nagyobb másik kisebb                 
+GYRO_TOLERANCE = 0.5
+
+def sign():
+    #poz neg vagy nulla
+    pass
+
+def g_angle(angle = hub.imu.heading()):
+    return ((angle + 180)%360)-180
+
+def calibrate():
     kerek_motorB.reset_angle(0)  #bal motor foka 0               
     kerek_motorJ.reset_angle(0)  #jobb motor foka 0              
-    hub.imu.reset_heading(0)   #gyro foka 0 ehhez képest lesz eltérés            
+    hub.imu.reset_heading(0)   #gyro foka 0 ehhez képest lesz eltérés 
+
+def forward(tavolsag, legkisebb_sebesseg = 5, maximalis_sebesseg = 100, lassitas = False, gyorsitas = False, ): 
+    eredeti_gyro = g_angle()
+    eredeti_kerekJ= kerek_motorJ.angle()    
+    eredeti_kerekB= kerek_motorB.angle()   
     cel_fok = (360 / kerek_kerulet) * tavolsag #a teljes köből kiszámoljuk 56 az hány fok majd megszolozzuk a távolsággal
-    while True: #örökre megy amig nem lépünk ki
+    while atlag_fok < cel_fok: #örökre megy amig nem lépünk ki
         bal_fok = abs(kerek_motorB.angle())  #mennyit fordult a bal motor, kell abs mert lehet -   
         jobb_fok = abs(kerek_motorJ.angle())  #mennyit fordult a jobb motor, kell abs mert lehet -
         atlag_fok = (bal_fok + jobb_fok) / 2 #mennyi az átlaguk, kicsi eltérés miatt
@@ -39,17 +54,15 @@ def forward(tavolsag, legkisebb_sebesseg, maximalis_sebesseg):
             aktualis_sebesseg = maximalis_sebesseg #menjen max sebeséggel
         irany_hiba = hub.imu.heading()     #mennyire fordult el az eredetitől
         korrekcio = irany_hiba * egyenes_ero / 2 #fokot megszorozzuk 5,6 felével, ha minus balra fordult sokat, ha plus akkor jobbra
-        kerek_motorB.run(aktualis_sebesseg - korrekcio)  #lelassít a korekcióval
-        kerek_motorJ.run(aktualis_sebesseg + korrekcio) #gyorsít a korekcióval
-        if atlag_fok >= cel_fok: #azért >=, mert lehet negyed fokkal több
-            break            # kilép a ciklusból  
+        kerek_motorB.run((aktualis_sebesseg - korrekcio))  #lelassít a korekcióval
+        kerek_motorJ.run(aktualis_sebesseg + korrekcio) #gyorsít a korekcióval 
 
-def backward(tavolsag, legkisebb_sebesseg, maximalis_sebesseg): 
-    kerek_motorB.reset_angle(0)  #bal motor foka 0               
-    kerek_motorJ.reset_angle(0)  #jobb motor foka 0              
-    hub.imu.reset_heading(0)   #gyro foka 0 ehhez képest lesz eltérés            
+def backward(tavolsag, legkisebb_sebesseg = 5, maximalis_sebesseg = 100, lassitas = False, gyorsitas = False, ): 
+    eredeti_gyro = g_angle()
+    eredeti_kerekJ= kerek_motorJ.angle()    
+    eredeti_kerekB= kerek_motorB.angle()   
     cel_fok = (360 / kerek_kerulet) * tavolsag #a teljes köből kiszámoljuk 56 az hány fok majd megszolozzuk a távolsággal
-    while True: #örökre megy amig nem lépünk ki
+    while atlag_fok < cel_fok: #örökre megy amig nem lépünk ki
         bal_fok = abs(kerek_motorB.angle())  #mennyit fordult a bal motor, kell abs mert lehet -   
         jobb_fok = abs(kerek_motorJ.angle())  #mennyit fordult a jobb motor, kell abs mert lehet -
         atlag_fok = (bal_fok + jobb_fok) / 2 #mennyi az átlaguk, kicsi eltérés miatt
@@ -61,17 +74,16 @@ def backward(tavolsag, legkisebb_sebesseg, maximalis_sebesseg):
         else: #ha 0.3-0.75
             aktualis_sebesseg = maximalis_sebesseg #menjen max sebeséggel
         irany_hiba = hub.imu.heading()     #mennyire fordult el az eredetitől
-        korrekcio = irany_hiba * egyenes_ero / 2 #fokot megszorozzuk 5,6 felével
-        kerek_motorB.run(-aktualis_sebesseg + korrekcio)  #lelassít a korekcióval, minusz mert hátra megy
-        kerek_motorJ.run(-aktualis_sebesseg - korrekcio) #gyorsít a korekcióval, minusz mert előre megy
-        if atlag_fok >= cel_fok: #azért >=, mert lehet negyed fokkal több
-            break            #kilép a ciklusból  
+        korrekcio = irany_hiba * egyenes_ero / 2 #fokot megszorozzuk 5,6 felével, ha minus balra fordult sokat, ha plus akkor jobbra
+        kerek_motorB.run((-aktualis_sebesseg + korrekcio))  #lelassít a korekcióval
+        kerek_motorJ.run(-aktualis_sebesseg - korrekcio) #gyorsít a korekcióval 
+
 def turn(szog, max_sebesseg=300, min_sebesseg=80, ero=4):
-    hub.imu.reset_heading(0)  #gyro foka legyen 0, ez adja az eltérést
+
     while True: #örök ciklus amig nem breakelünk
         aktualis_szog = hub.imu.heading()   #a mostani szög legyen egyenlő a gyroval
         szog_tavolsag = szog - aktualis_szog   #mennyire vagyunk még messze a céltól
-        if abs(szog_tavolsag) < 0.5:  #ha fél foknál közelebb van
+        if abs(szog_tavolsag) < GYRO_TOLERANCE:  #ha fél foknál közelebb van
             break   #lépjen ki
         # arányos lassítás a célhoz közeledve
         sebesseg = abs(szog_tavolsag) * ero #a sebesség legyen a szögtávolság*erővel pl 1 fok akkor 1*4=4
@@ -119,6 +131,7 @@ while True:
         pass
    
     if Button.CENTER in megnyomva:
+        calibrate()
         futasok[futas]()
         futas = (futas + 1) % 4
  
