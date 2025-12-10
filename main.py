@@ -71,7 +71,7 @@ def forward(tavolsag, legkisebb_sebesseg = 5, maximalis_sebesseg = 1000, lassita
         kerek_motorB.run(min(maximalis_sebesseg, max(legkisebb_sebesseg, aktualis_sebesseg + korrekcio)))  #lelassít a korekcióval
         kerek_motorJ.run(aktualis_sebesseg - korrekcio) #gyorsít a korekcióval 
 
-'''def backward(tavolsag, legkisebb_sebesseg = 5, maximalis_sebesseg = 100, lassitas = False, gyorsitas = False, ): 
+def backward(tavolsag, legkisebb_sebesseg = 5, maximalis_sebesseg = 100, lassitas = False, gyorsitas = False, ): 
     eredeti_gyro = g_angle()
     eredeti_kerekJ= kerek_motorJ.angle()    
     eredeti_kerekB= kerek_motorB.angle()   
