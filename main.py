@@ -1,7 +1,6 @@
 from pybricks.hubs import *
 from pybricks.pupdevices import *
 from pybricks.parameters import *
-from pybricks.robotics import *
 from pybricks.tools import *
 from umath import *
  
