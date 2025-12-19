@@ -10,7 +10,6 @@ hub = PrimeHub()
 bal  = Motor(Port.B)
 jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE)
  
-hub.system.set_stop_button(Button.BLUETOOTH)
 def clamp(x, a, b):
     return max(a, min(b, x))
  
@@ -20,7 +19,7 @@ def avg_angle_deg():
  
 hub.imu.reset_heading(0)
 irany = 0
-def forward(distance_mm, min_speed=30, max_speed=800, easein=50, easeout=140, korekcio=0.01):
+def forward(distance_mm, min_speed=40, easein=40, korekcio=0.01, max_speed = 700, easeout=80):
     global irany
     bal.reset_angle(0)
     jobb.reset_angle(0)
@@ -29,9 +28,10 @@ def forward(distance_mm, min_speed=30, max_speed=800, easein=50, easeout=140, ko
     easeout /= 0.489
     while True:
         dist_traveled = (bal.angle()+jobb.angle()) / 2
-        dist_traveled = abs(dist_traveled)
         curpos = distance_mm - dist_traveled
         sign = curpos/abs(curpos)
+        dist_traveled = abs(dist_traveled)
+        curpos = abs(curpos)
         print(dist_traveled, curpos)
         if abs(curpos) < 3:
             break
@@ -44,7 +44,7 @@ def forward(distance_mm, min_speed=30, max_speed=800, easein=50, easeout=140, ko
         else:
             curspeed = max_speed * sign
         iranyelteres = (irany - hub.imu.heading()) * korekcio
-        korekciomertek = curspeed * iranyelteres
+        korekciomertek = curspeed * iranyelteres * sign
         bal.run (curspeed - korekciomertek)
         jobb.run(curspeed + korekciomertek)
     bal.hold()
@@ -56,16 +56,20 @@ def clamp(x, a, b):
     return max(a, min(b, x))
  
 # -------- STABIL FORDULÁS --------
-def turn(angle_deg, max_speed=360, easeout=100, min_speed=50):
+def turn(angle_deg, max_speed=360, easeout=80, min_speed=50):
  
     alap_fok = hub.imu.heading()
     global irany
     cel_fok = irany+angle_deg
     irany = cel_fok
+    cel_fok -= alap_fok
+    # print(cel_fok, alap_fok)
     while True:
         angle_turned = hub.imu.heading() - alap_fok
         angle_toturn = cel_fok - angle_turned
+        # print(angle_turned, angle_toturn)
         sign = angle_toturn/abs(angle_toturn)
+        angle_toturn = abs(angle_toturn)
         if angle_toturn <= 0.5:
             break
         
@@ -79,11 +83,3 @@ def turn(angle_deg, max_speed=360, easeout=100, min_speed=50):
         jobb.run(curspeed)
     bal.hold()
     jobb.hold()
-
-
-
-irany = 45
-forward(400, min_speed=40, easein=40, korekcio=0.02, max_speed = 700, easeout=100)
-print(hub.imu.heading())
-
-
