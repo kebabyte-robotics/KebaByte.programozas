@@ -2,7 +2,7 @@ from pybricks.hubs import *
 from pybricks.pupdevices import *
 from pybricks.parameters import *
 from pybricks.tools import *
-from umath import *
+
  
 # --- HUB és motorok ---
 hub = PrimeHub()
