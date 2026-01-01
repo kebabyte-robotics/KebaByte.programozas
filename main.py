@@ -1,47 +1,39 @@
-from pybricks.hubs import *
-from pybricks.pupdevices import *
-from pybricks.parameters import *
-from pybricks.tools import *
+from pybricks.hubs import * #beimportálja az agyat
+from pybricks.pupdevices import * #beimportálja a pupdevicesokat
+from pybricks.parameters import * #beimportálja a paramétereket
+from pybricks.tools import * #beimportálja a toolsokat
 
+
+hub = PrimeHub() #az agyat elnevezi hubnak
+bal  = Motor(Port.B) #a motort ami a B portba van elnevezzük balnak és óra járásával megegyező irányba forog
+jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE) #a motort ami az F portba van elnevezzük balnak és óra járásával ellentétes irányba forog
  
-# --- HUB és motorok ---
-hub = PrimeHub()
-bal  = Motor(Port.B)
-jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE)
- 
-def clamp(x, a, b):
-    return max(a, min(b, x))
- 
-def avg_angle_deg():
-    return (abs(bal.angle()) + abs(jobb.angle())) / 2
- 
- 
-hub.imu.reset_heading(0)
-irany = 0
-def forward(distance_mm, min_speed=40, easein=40, korekcio=0.01, max_speed = 700, easeout=80):
-    global irany
-    bal.reset_angle(0)
-    jobb.reset_angle(0)
-    distance_mm = distance_mm / 0.489
-    easein /= 0.489
-    easeout /= 0.489
-    while True:
-        dist_traveled = (bal.angle()+jobb.angle()) / 2
-        curpos = distance_mm - dist_traveled
+hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
+irany = 0 #létrehozunk egy irany nevű változót aminek 0 értéket adunk
+def egyenes(egyenes_tavolsag, egyenes_legkisebb_sebesseg=40, egyenes_gyorsitas=40, korekcio=0.01, egyenes_legnagyobb_sebesseg = 700, egyenes_lassitas=80): #létrehozunk egy egyenes nevü függvényt, paramétereket adunk meg amit használni fogunk a függvényben, az egyenes_tavolsagot, egyenes_lassitast és a egyenes_gyorsitast mm-be adjuk meg, az alap értékek csak átlagban működnek 
+    global irany #engedélyezzük a függvénynek az irany változó használatát a függvényen belül
+    bal.reset_angle(0) #a bal szögét 0-ra állítjuk
+    jobb.reset_angle(0) #a jobb szögét 0-ra állítjuk
+    egyenes_tavolsag = egyenes_tavolsag / 0.489 #a mm-ben megadott egyenes_tavolsagot átváltjuk motor fokokra, a kerék kerületét elosztjuk 360nal
+    egyenes_gyorsitas /= 0.489 #a mm-ben megadott egyenes_gyorsitast átváltjuk motor fokokra, a kerék kerületét elosztjuk 360nal
+    egyenes_lassitas /= 0.489 #a mm-ben megadott egyenes_lassitast átváltjuk motor fokokra, a kerék kerületét elosztjuk 360nal
+    while True: #elindítunk egy ciklust ami addig fut ameddig le nem állítjuk
+        egyenes_megtett_tavolsag = (bal.angle()+jobb.angle()) / 2
+        curpos = egyenes_tavolsag - egyenes_megtett_tavolsag
         sign = curpos/abs(curpos)
-        dist_traveled = abs(dist_traveled)
+        egyenes_megtett_tavolsag = abs(egyenes_megtett_tavolsag)
         curpos = abs(curpos)
-        print(dist_traveled, curpos)
+        print(egyenes_megtett_tavolsag, curpos)
         if abs(curpos) < 3:
             break
-        if curpos < easeout :
-            ratio = curpos / easeout
-            curspeed = max(ratio * max_speed, min_speed) * sign
-        elif dist_traveled < easein:
-            ratio = dist_traveled / easein
-            curspeed = max(ratio * max_speed, min_speed) * sign
+        if curpos < egyenes_lassitas :
+            ratio = curpos / egyenes_lassitas
+            curspeed = max(ratio * egyenes_legnagyobb_sebesseg, egyenes_legkisebb_sebesseg) * sign
+        elif egyenes_megtett_tavolsag < egyenes_gyorsitas:
+            ratio = egyenes_megtett_tavolsag / egyenes_gyorsitas
+            curspeed = max(ratio * egyenes_legnagyobb_sebesseg, egyenes_legkisebb_sebesseg) * sign
         else:
-            curspeed = max_speed * sign
+            curspeed = egyenes_legnagyobb_sebesseg * sign
         iranyelteres = (irany - hub.imu.heading()) * korekcio
         korekciomertek = curspeed * iranyelteres * sign
         bal.run (curspeed - korekciomertek)
@@ -49,10 +41,6 @@ def forward(distance_mm, min_speed=40, easein=40, korekcio=0.01, max_speed = 700
     bal.hold()
     jobb.hold()
 
-
-
-def clamp(x, a, b):
-    return max(a, min(b, x))
  
 # -------- STABIL FORDULÁS --------
 def turn(angle_deg, max_speed=360, easeout=80, min_speed=50):
