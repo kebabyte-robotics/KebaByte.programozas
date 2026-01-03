@@ -68,10 +68,16 @@ def kanyarodas(k_fok, k_legnagyobb_sebesseg=360, k_lassitas=80, k_legkisebb_sebe
 
 
 def feltet(f_fok, f_sebesseg):
-    f_idotartam = abs(f_fok) / abs(f_sebesseg) * 1000  
-    feltet_bal.run(f_sebesseg)
-    feltet_jobb.run(f_sebesseg)
-    wait(int(f_idotartam))
+    f_irany = 1
+    if f_fok < 0:
+        f_irany = -1
+    f_fok = abs(f_fok)
+    f_sebesseg = abs(f_sebesseg)
+    f_ido = (f_fok / f_sebesseg) * 1000
+    feltet_bal.run(f_sebesseg * f_irany)
+    feltet_jobb.run(f_sebesseg * f_irany)
+    wait(int(f_ido))
     bal.hold()
     jobb.hold()
+feltet(360, 360)
     
