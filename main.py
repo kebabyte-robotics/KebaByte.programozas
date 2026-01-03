@@ -6,7 +6,9 @@ from pybricks.tools import * #beimportálja a toolsokat
 hub = PrimeHub() #az agyat elnevezi hubnak
 bal  = Motor(Port.B) #a motort ami a B portba van elnevezzük balnak és óra járásával megegyező irányba forog
 jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE) #a motort ami az F portba van elnevezzük balnak és óra járásával ellentétes irányba forog
- 
+feltet_bal = Motor(Port.E)
+feltet_jobb = Motor(Port.A) 
+
 hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
 irany = 0 #létrehozunk egy irany nevű változót aminek 0 értéket adunk
 def egyenes(e_tavolsag, e_legkisebb_sebesseg=40, e_gyorsitas=40, e_korekcio=0.01, e_legnagyobb_sebesseg = 700, e_lassitas=80): #létrehozunk egy egyenes nevü függvényt, paramétereket adunk meg amit használni fogunk a függvényben, az e_tavolsagot, e_lassitast és a e_gyorsitast mm-be adjuk meg, az alap értékek csak átlagban működnek 
@@ -63,3 +65,13 @@ def kanyarodas(k_fok, k_legnagyobb_sebesseg=360, k_lassitas=80, k_legkisebb_sebe
         jobb.run(k_mostani_sebesseg) #a jobb a k_mostani_sebesseg (azért +, mert ha jobbra forog akkor + eltérés abból + marad, vagyis elore megy, ha balra tér el akkor - és az - marad vagyis hatra megy)
     bal.hold() #a bal megáll(pont ott marad a pozíciója)
     jobb.hold() #a jobb megáll(pont ott marad a pozíciója)
+
+
+def feltet(f_fok, f_sebesseg):
+    f_idotartam = abs(f_fok) / abs(f_sebesseg) * 1000  
+    feltet_bal.run(f_sebesseg)
+    feltet_jobb.run(f_sebesseg)
+    wait(int(f_idotartam))
+    bal.hold()
+    jobb.hold()
+    
