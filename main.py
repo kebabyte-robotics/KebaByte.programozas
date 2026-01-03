@@ -79,5 +79,5 @@ def feltet(f_fok, f_sebesseg):
     wait(int(f_ido))
     bal.hold()
     jobb.hold()
-feltet(360, 360)
+
     
