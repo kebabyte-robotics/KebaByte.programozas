@@ -10,63 +10,60 @@ jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE) #a motort ami az F portba van e
  
 hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
 irany = 0 #létrehozunk egy irany nevű változót aminek 0 értéket adunk
-def egyenes(egyenes_tavolsag, egyenes_legkisebb_sebesseg=40, egyenes_gyorsitas=40, korekcio=0.01, egyenes_legnagyobb_sebesseg = 700, egyenes_lassitas=80): #létrehozunk egy egyenes nevü függvényt, paramétereket adunk meg amit használni fogunk a függvényben, az egyenes_tavolsagot, egyenes_lassitast és a egyenes_gyorsitast mm-be adjuk meg, az alap értékek csak átlagban működnek 
+def egyenes(e_tavolsag, e_legkisebb_sebesseg=40, e_gyorsitas=40, e_korekcio=0.01, e_legnagyobb_sebesseg = 700, e_lassitas=80): #létrehozunk egy egyenes nevü függvényt, paramétereket adunk meg amit használni fogunk a függvényben, az e_tavolsagot, e_lassitast és a e_gyorsitast mm-be adjuk meg, az alap értékek csak átlagban működnek 
     global irany #engedélyezzük a függvénynek az irany változó használatát a függvényen belül
     bal.reset_angle(0) #a bal szögét 0-ra állítjuk
     jobb.reset_angle(0) #a jobb szögét 0-ra állítjuk
-    egyenes_tavolsag = egyenes_tavolsag / 0.489 #a mm-ben megadott egyenes_tavolsagot átváltjuk motor fokokra, a kerék kerületét elosztjuk 360nal
-    egyenes_gyorsitas /= 0.489 #a mm-ben megadott egyenes_gyorsitast átváltjuk motor fokokra, a kerék kerületét elosztjuk 360nal
-    egyenes_lassitas /= 0.489 #a mm-ben megadott egyenes_lassitast átváltjuk motor fokokra, a kerék kerületét elosztjuk 360nal
+    e_tavolsag = e_tavolsag / 0.489 #a mm-ben megadott e_tavolsagot átváltjuk motor fokokra, a kerék kerületét elosztjuk 360nal
+    e_gyorsitas /= 0.489 #a mm-ben megadott e_gyorsitast átváltjuk motor fokokra, a kerék kerületét elosztjuk 360nal
+    e_lassitas /= 0.489 #a mm-ben megadott e_lassitast átváltjuk motor fokokra, a kerék kerületét elosztjuk 360nal
     while True: #elindítunk egy ciklust ami addig fut ameddig le nem állítjuk
-        egyenes_megtett_tavolsag = (bal.angle()+jobb.angle()) / 2
-        curpos = egyenes_tavolsag - egyenes_megtett_tavolsag
-        sign = curpos/abs(curpos)
-        egyenes_megtett_tavolsag = abs(egyenes_megtett_tavolsag)
-        curpos = abs(curpos)
-        print(egyenes_megtett_tavolsag, curpos)
-        if abs(curpos) < 3:
+        e_megtett_tavolsag = (bal.angle()+jobb.angle()) / 2
+        e_hatralevo_tavolsag = e_tavolsag - e_megtett_tavolsag
+        e_jelzo = e_hatralevo_tavolsag/abs(e_hatralevo_tavolsag)
+        e_megtett_tavolsag = abs(e_megtett_tavolsag)
+        e_hatralevo_tavolsag = abs(e_hatralevo_tavolsag)
+        if abs(e_hatralevo_tavolsag) < 3:
             break
-        if curpos < egyenes_lassitas :
-            ratio = curpos / egyenes_lassitas
-            curspeed = max(ratio * egyenes_legnagyobb_sebesseg, egyenes_legkisebb_sebesseg) * sign
-        elif egyenes_megtett_tavolsag < egyenes_gyorsitas:
-            ratio = egyenes_megtett_tavolsag / egyenes_gyorsitas
-            curspeed = max(ratio * egyenes_legnagyobb_sebesseg, egyenes_legkisebb_sebesseg) * sign
+        if e_hatralevo_tavolsag < e_lassitas :
+            e_ratio = e_hatralevo_tavolsag / e_lassitas
+            e_mostani_sebesseg = max(e_ratio * e_legnagyobb_sebesseg, e_legkisebb_sebesseg) * e_jelzo
+        elif e_megtett_tavolsag < e_gyorsitas:
+            e_ratio = e_megtett_tavolsag / e_gyorsitas
+            e_mostani_sebesseg = max(e_ratio * e_legnagyobb_sebesseg, e_legkisebb_sebesseg) * e_jelzo
         else:
-            curspeed = egyenes_legnagyobb_sebesseg * sign
-        iranyelteres = (irany - hub.imu.heading()) * korekcio
-        korekciomertek = curspeed * iranyelteres * sign
-        bal.run (curspeed - korekciomertek)
-        jobb.run(curspeed + korekciomertek)
+            e_mostani_sebesseg = e_legnagyobb_sebesseg * e_jelzo
+        e_iranyelteres = (irany - hub.imu.heading()) * e_korekcio
+        e_korekciomertek = e_mostani_sebesseg * e_iranyelteres * e_jelzo
+        bal.run (e_mostani_sebesseg - e_korekciomertek)
+        jobb.run(e_mostani_sebesseg + e_korekciomertek)
     bal.hold()
     jobb.hold()
 
+
+
+def kanyarodas(k_fok, k_legnagyobb_sebesseg=360, k_lassitas=80, k_legkisebb_sebesseg=50):
  
-# -------- STABIL FORDULÁS --------
-def turn(angle_deg, max_speed=360, easeout=80, min_speed=50):
- 
-    alap_fok = hub.imu.heading()
+    k_alap_fok = hub.imu.heading()
     global irany
-    cel_fok = irany+angle_deg
-    irany = cel_fok
-    cel_fok -= alap_fok
-    # print(cel_fok, alap_fok)
+    k_cel_fok = irany+k_fok
+    irany = k_cel_fok
+    k_cel_fok -= k_alap_fok
     while True:
-        angle_turned = hub.imu.heading() - alap_fok
-        angle_toturn = cel_fok - angle_turned
-        # print(angle_turned, angle_toturn)
-        sign = angle_toturn/abs(angle_toturn)
-        angle_toturn = abs(angle_toturn)
-        if angle_toturn <= 0.5:
+        k_megtett_fokok = hub.imu.heading() - k_alap_fok
+        k_tovabbi_fokok = k_cel_fok - k_megtett_fokok
+        k_jelzo = k_tovabbi_fokok/abs(k_tovabbi_fokok)
+        k_tovabbi_fokok = abs(k_tovabbi_fokok)
+        if k_tovabbi_fokok <= 0.5:
             break
         
-        if angle_toturn < easeout :
-            ratio = angle_toturn / easeout
-            curspeed = max(ratio * max_speed, min_speed) * sign
+        if k_tovabbi_fokok < k_lassitas :
+            k_ratio = k_tovabbi_fokok / k_lassitas
+            k_mostani_sebesseg = max(k_ratio * k_legnagyobb_sebesseg, k_legkisebb_sebesseg) * k_jelzo
         else:
-            curspeed = max_speed * sign
+            k_mostani_sebesseg = k_legnagyobb_sebesseg * k_jelzo
         
-        bal.run(-curspeed)
-        jobb.run(curspeed)
+        bal.run(-k_mostani_sebesseg)
+        jobb.run(k_mostani_sebesseg)
     bal.hold()
     jobb.hold()
