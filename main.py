@@ -9,8 +9,67 @@ jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE) #a motort ami az F portba van e
 feltet_bal = Motor(Port.E)
 feltet_jobb = Motor(Port.A) 
 
+feltet_aktiv = False
+feltet_cel = 0
+feltet_seb = 0
+feltet_motor = 0
+feltet_irany = 1
 hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
 irany = 0 #létrehozunk egy irany nevű változót aminek 0 értéket adunk
+
+def feltet_indit(f_fok, f_sebesseg, f_motor=0):
+    global feltet_aktiv, feltet_cel, feltet_sebesseg, feltet_motor, feltet_irany
+
+    feltet_irany = 1
+    if f_fok < 0:
+        feltet_irany = -1
+
+    feltet_cel = abs(f_fok)
+    feltet_sebesseg = abs(f_sebesseg)
+    feltet_motor = f_motor
+    feltet_aktiv = True
+
+    if f_motor == 1:
+        feltet_jobb.reset_angle(0)
+    elif f_motor == 2:
+        feltet_bal.reset_angle(0)
+    else:
+        feltet_bal.reset_angle(0)
+        feltet_jobb.reset_angle(0)
+
+
+def feltet_update():
+    global feltet_aktiv
+
+    if not feltet_aktiv:
+        return
+
+    if feltet_motor == 1:
+        megtett = abs(feltet_jobb.angle())
+        if megtett < feltet_cel:
+            feltet_jobb.run(feltet_sebesseg * feltet_irany)
+        else:
+            feltet_jobb.hold()
+            feltet_aktiv = False
+
+    elif feltet_motor == 2:
+        megtett = abs(feltet_bal.angle())
+        if megtett < feltet_cel:
+            feltet_bal.run(feltet_sebesseg * feltet_irany)
+        else:
+            feltet_bal.hold()
+            feltet_aktiv = False
+
+    else:
+        megtett = (abs(feltet_bal.angle()) + abs(feltet_jobb.angle())) / 2
+        if megtett < feltet_cel:
+            feltet_bal.run(feltet_sebesseg * feltet_irany)
+            feltet_jobb.run(feltet_sebesseg * feltet_irany)
+        else:
+            feltet_bal.hold()
+            feltet_jobb.hold()
+            feltet_aktiv = False
+
 def egyenes(e_tavolsag, e_legkisebb_sebesseg=40, e_gyorsitas=40, e_korekcio=0.01, e_legnagyobb_sebesseg = 700, e_lassitas=80): #létrehozunk egy egyenes nevü függvényt, paramétereket adunk meg amit használni fogunk a függvényben, az e_tavolsagot, e_lassitast és a e_gyorsitast mm-be adjuk meg, az alap értékek csak átlagban működnek 
     global irany #engedélyezzük a függvénynek az irany változó használatát a függvényen belül
     bal.reset_angle(0) #a bal szögét 0-ra állítjuk
@@ -38,6 +97,7 @@ def egyenes(e_tavolsag, e_legkisebb_sebesseg=40, e_gyorsitas=40, e_korekcio=0.01
         e_korekciomertek = e_mostani_sebesseg * e_iranyelteres * e_jelzo #az e_korekcio mertek legyen egyenlő az e_mostani_sebesseg * e_iranyelteres * e_jelzo(1,-1) ez lesz a mérték amennyivel korigálni kell
         bal.run (e_mostani_sebesseg - e_korekciomertek) #a bal az e_mostani_sebesseg - e_korekciomertek(azért -, mert ha jobbra tér akkor + eltérés akkor abból - lesz, vagyis lassít, ha balra tér el akkor - és -- az + vagyis gyorsít)
         jobb.run(e_mostani_sebesseg + e_korekciomertek) #a jobb az e_mostani_sebesseg + e_korekciomertek (azért +, mert ha jobbra tér el akkor + eltérés abból + marad, vagyis gyorsít, ha balra tér el akkor - és az - marad vagyis lassít)
+        feltet_update()
     bal.hold() #a bal megáll(pont ott marad a pozíciója)
     jobb.hold()#a jobb megáll(pont ott marad a pozíciója)
 
@@ -63,26 +123,11 @@ def kanyarodas(k_fok, k_legnagyobb_sebesseg=360, k_lassitas=80, k_legkisebb_sebe
             k_mostani_sebesseg = k_legnagyobb_sebesseg * k_jelzo #akkor a k_mostani_sebesseg legyen egyenlő a k_legnagyobb_sebesseg * k_jelzo(1 vagy -1)
         bal.run(-k_mostani_sebesseg) #a bal a -k_mostani_sebesseg (azért -, mert ha jobbra forog akkor + eltérés akkor abból - lesz, vagyis hatra megy, ha balra tér el akkor - és -- az + vagyis elore megy)
         jobb.run(k_mostani_sebesseg) #a jobb a k_mostani_sebesseg (azért +, mert ha jobbra forog akkor + eltérés abból + marad, vagyis elore megy, ha balra tér el akkor - és az - marad vagyis hatra megy)
+        feltet_update()
     bal.hold() #a bal megáll(pont ott marad a pozíciója)
     jobb.hold() #a jobb megáll(pont ott marad a pozíciója)
 
 
-def feltet(f_fok, f_sebesseg, f_motor=0): 
-    f_irany = 1
-    if f_fok < 0:
-        f_irany = -1
-    f_fok = abs(f_fok)
-    f_sebesseg = abs(f_sebesseg)
-    f_ido = (f_fok / f_sebesseg) * 1000
-    if f_motor == 1:
-        feltet_jobb.run(f_sebesseg * f_irany)
-    elif f_motor == 2:
-        feltet_bal.run(f_sebesseg * f_irany)
-    else:
-        feltet_bal.run(f_sebesseg * f_irany)
-        feltet_jobb.run(f_sebesseg * f_irany)
-    wait(int(f_ido))
-    feltet_bal.hold()
-    feltet_jobb.hold()
 
-    
+
+
