@@ -125,9 +125,22 @@ def kanyarodas(k_fok, k_legnagyobb_sebesseg=360, k_lassitas=80, k_legkisebb_sebe
         jobb.run(k_mostani_sebesseg) #a jobb a k_mostani_sebesseg (azért +, mert ha jobbra forog akkor + eltérés abból + marad, vagyis elore megy, ha balra tér el akkor - és az - marad vagyis hatra megy)
         feltet_update()
     bal.hold() #a bal megáll(pont ott marad a pozíciója)
-    jobb.hold() #a jobb megáll(pont ott marad a pozíciója)
-
-
-
-
-
+    jobb.hold() #a jobb megáll(pont ott marad a pozíciója)def feltet(f_fok, f_sebesseg, f_motor=0):
+def feltet(f_fok, f_sebesseg, f_motor=0):
+    f_irany = 1
+    if f_fok < 0:
+        f_irany = -1
+    f_fok = abs(f_fok)
+    f_sebesseg = abs(f_sebesseg)
+    f_ido = (f_fok / f_sebesseg) * 1000
+    if f_motor == 1:
+        feltet_jobb.run(f_sebesseg * f_irany)
+    elif f_motor == 2:
+        feltet_bal.run(f_sebesseg * f_irany)
+    else:
+        feltet_bal.run(f_sebesseg * f_irany)
+        feltet_jobb.run(f_sebesseg * f_irany)
+    wait(int(f_ido))
+    feltet_bal.hold()
+    feltet_jobb.hold()
+ 
