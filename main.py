@@ -43,7 +43,6 @@ def egyenes(e_tavolsag, e_legkisebb_sebesseg=40, e_gyorsitas=40, e_korekcio=0.01
     jobb.hold()#a jobb megáll(pont ott marad a pozíciója)
 
 
-
 def kanyarodas(k_fok, k_legnagyobb_sebesseg=360, k_lassitas=80, k_legkisebb_sebesseg=50): #létrehozunk egy kanyarodas nevü függvényt, paramétereket adunk meg amit használni fogunk a függvényben, a k_fok-ot(fokban), k_legnagyobb_sebesseg, k_lassitas(fok-ban), k_legkisebb_sebesseg, az alapból beírt paramétrek csak átlagban működnek
     k_alap_fok = hub.imu.heading() #a k_alap_fok értéke legyen egyenlő a gyro értékével, azért kell,h ogy tudjon az előző tévedések alapján korigálni
     global irany #engedélyezzük a függvénynek az irany változó használatát a függvényen belül
