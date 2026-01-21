@@ -7,40 +7,57 @@ from pybricks.tools import wait, StopWatch
 hub = PrimeHub()
 hub.system.set_stop_button(None)
 hub.system.set_stop_button(Button.BLUETOOTH)
-i = 2
 hub = PrimeHub()
-press = []
-pressd = []
+
+
 hub.display.number(1)
+def futas_0():
+    print("futas")
+    forward(1000000)
+    #pass
+ 
+def futas_1():
+    while True:
+        db.turn(100)
+ 
+def futas_2():
+    while True:
+        hub.light.on(Color.ORANGE)
+        wait(500)
+ 
+def futas_3():
+    while True:
+        hub.speaker.beep()
+        wait(500)
+ 
+futas = 0
+futasok = [futas_0, futas_1, futas_2, futas_3]
+ 
 while True:
-    while not any(press):
-        press = hub.buttons.pressed()
-        pressd = hub.buttons.pressed()
+    print("menu")
+    motor_stop()
+    hub.display.number(futas + 1)
+    megnyomva = []
+ 
+    while not any(megnyomva):
+        megnyomva = hub.buttons.pressed()
        
-        #hub.display.text((str)('a'))
+    while hub.buttons.pressed():
+        pass
    
-    #hub.display.text((str)('b'))
-   
-    while any(press):
-        #hub.display.text((str)(pressed))
-        press = hub.buttons.pressed()
-       
-    #hub.display.text((str)(pressd))
-   
-   
-    if Button.CENTER in pressd:
-        hub.display.off()
-        hub.display.number(i)
-        if i == 1:
-            hub.display.pixel(3, 0, 0)
-        else:
-            hub.display.pixel(i-2, 0, 0)
-        i = i % 4 + 1
-        pressd = []
-        press = []
-    elif Button.RIGHT in pressd:
-        hub.display.off()
-        hub.display.number(i)
-        i = i % 4 + 1
-        pressd = []
-        press = []
+    if Button.CENTER in megnyomva:
+        calibrate()
+        futasok[futas]()
+        futas = (futas + 1) % 4
+ 
+    elif Button.RIGHT in megnyomva:
+        futas = (futas + 1) % 4
+ 
+    elif Button.LEFT in megnyomva:
+        futas = (futas - 1) % 4
+ 
+    if Button.BLUETOOTH in megnyomva:
+        break
+ 
+ 
+ 
