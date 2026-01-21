@@ -46,7 +46,6 @@ while True:
         pass
    
     if Button.CENTER in megnyomva:
-        calibrate()
         futasok[futas]()
         futas = (futas + 1) % 4
  
