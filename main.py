@@ -6,8 +6,8 @@ from pybricks.tools import * #beimportálja a toolsokat
 hub = PrimeHub() #az agyat elnevezi hubnak
 bal  = Motor(Port.B) #a motort ami a B portba van elnevezzük balnak és óra járásával megegyező irányba forog
 jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE) #a motort ami az F portba van elnevezzük balnak és óra járásával ellentétes irányba forog
-feltet_bal = Motor(Port.E)
-feltet_jobb = Motor(Port.A) 
+feltet_bal = Motor(Port.E, gears=[12, 12, 20])
+feltet_jobb = Motor(Port.A, gears=[12, 12, 20]) 
 
 hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
 irany = 0 #létrehozunk egy irany nevű változót aminek 0 értéket adunk
