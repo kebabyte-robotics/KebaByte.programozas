@@ -6,8 +6,8 @@ from pybricks.tools import * #beimportálja a toolsokat
 hub = PrimeHub() #az agyat elnevezi hubnak
 bal  = Motor(Port.B) #a motort ami a B portba van elnevezzük balnak és óra járásával megegyező irányba forog
 jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE) #a motort ami az F portba van elnevezzük balnak és óra járásával ellentétes irányba forog
-feltet_bal = Motor(Port.E, gears=[12, 12, 20])
-feltet_jobb = Motor(Port.A, gears=[12, 12, 20]) 
+feltet_bal = Motor(Port.E, gears=[12, 12, 20]) #a feltét motort ami az E portba van elnevezzük feltet_balnak és a fogaskerék áttét 12, 12, 20
+feltet_jobb = Motor(Port.A, gears=[12, 12, 20])  #a feltét motort ami az A portba van elnevezzük feltet_jobbnak és a fogaskerék áttét 12, 12, 20
 
 hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
 irany = 0 #létrehozunk egy irany nevű változót aminek 0 értéket adunk
@@ -65,16 +65,16 @@ def kanyarodas(k_fok, k_legnagyobb_sebesseg=360, k_lassitas=80, k_legkisebb_sebe
         bal.run(-k_mostani_sebesseg) #a bal a -k_mostani_sebesseg (azért -, mert ha jobbra forog akkor + eltérés akkor abból - lesz, vagyis hatra megy, ha balra tér el akkor - és -- az + vagyis elore megy)
         jobb.run(k_mostani_sebesseg) #a jobb a k_mostani_sebesseg (azért +, mert ha jobbra forog akkor + eltérés abból + marad, vagyis elore megy, ha balra tér el akkor - és az - marad vagyis hatra megy)
     bal.hold() #a bal megáll(pont ott marad a pozíciója)
-    jobb.hold() #a jobb megáll(pont ott marad a pozíciója)def feltet(f_fok, f_sebesseg, f_motor=0):
+    jobb.hold() #a jobb megáll(pont ott marad a pozíciója)
 
-def jobb_feltet(angle, speed = 400): 
+def jobb_feltet(angle, speed = 400): #létrehozunk egy jobb_feltet nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a jobb feltét motorra vonatkozik
     feltet_jobb.run_angle(speed, angle)
 
-def bal_feltet(angle, speed = 400): 
+def bal_feltet(angle, speed = 400): #létrehozunk egy bal_feltet nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a bal feltét motorra vonatkozik
     feltet_bal.run_angle(speed, angle)
 
-def jobb_feltet_hatter(angle, speed = 400): 
+def jobb_feltet_hatter(angle, speed = 400): #létrehozunk egy jobb_feltet_hatter nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a jobb feltét motorra vonatkozik és ez mozgás közben is működik
     feltet_jobb.run_angle(speed, angle, wait=False)
 
-def bal_feltet_hatter(angle, speed = 400): 
+def bal_feltet_hatter(angle, speed = 400): #létrehozunk egy bal_feltet_hatter nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a bal feltét motorra vonatkozik és ez mozgás közben
     feltet_bal.run_angle(speed, angle, wait=False)
