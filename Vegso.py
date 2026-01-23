@@ -11,8 +11,8 @@ feltet_jobb = Motor(Port.A, gears=[12, 12, 20])  #a feltét motort ami az A port
 
 hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
 irany = 0 #létrehozunk egy irany nevű változót aminek 0 értéket adunk
-jobb_attet = 1
-bal_attet = 1
+jobb_attet = 1 #létrehozunk egy jobb_attet nevű változót aminek 1 értéket adunk, ez fogja számolni a fogaskerék áttéteket
+bal_attet = 1 #létrehozunk egy jobb_attet nevű változót aminek 1 értéket adunk, ez fogja számolni a fogaskerék áttéteket
 
 feltet_bal.control.limits(acceleration=999)
 feltet_jobb.control.limits(acceleration=999)
