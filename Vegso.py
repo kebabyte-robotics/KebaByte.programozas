@@ -6,16 +6,14 @@ from pybricks.tools import * #beimportálja a toolsokat
 hub = PrimeHub() #az agyat elnevezi hubnak
 bal  = Motor(Port.B) #a motort ami a B portba van elnevezzük balnak és óra járásával megegyező irányba forog
 jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE) #a motort ami az F portba van elnevezzük balnak és óra járásával ellentétes irányba forog
-feltet_bal = Motor(Port.E, gears=[12, 12, 20]) #a feltét motort ami az E portba van elnevezzük feltet_balnak és a fogaskerék áttét 12, 12, 20
-feltet_jobb = Motor(Port.A, gears=[12, 12, 20])  #a feltét motort ami az A portba van elnevezzük feltet_jobbnak és a fogaskerék áttét 12, 12, 20
+feltet_bal = Motor(Port.E) #a feltét motort ami az E portba van elnevezzük feltet_balnak és a fogaskerék áttét 12, 12, 20
+feltet_jobb = Motor(Port.A)  #a feltét motort ami az A portba van elnevezzük feltet_jobbnak és a fogaskerék áttét 12, 12, 20
 
 hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
 irany = 0 #létrehozunk egy irany nevű változót aminek 0 értéket adunk
 jobb_attet = 1 #létrehozunk egy jobb_attet nevű változót aminek 1 értéket adunk, ez fogja számolni a fogaskerék áttéteket
 bal_attet = 1 #létrehozunk egy jobb_attet nevű változót aminek 1 értéket adunk, ez fogja számolni a fogaskerék áttéteket
 
-feltet_bal.control.limits(acceleration=999)
-feltet_jobb.control.limits(acceleration=999)
 
 def egyenes(e_tavolsag, e_legkisebb_sebesseg=40, e_gyorsitas=40, e_korekcio=0.01, e_legnagyobb_sebesseg = 700, e_lassitas=80): #létrehozunk egy egyenes nevü függvényt, paramétereket adunk meg amit használni fogunk a függvényben, az e_tavolsagot, e_lassitast és a e_gyorsitast mm-be adjuk meg, az alap értékek csak átlagban működnek 
     global irany #engedélyezzük a függvénynek az irany változó használatát a függvényen belül
@@ -73,82 +71,83 @@ def kanyarodas(k_fok, k_legnagyobb_sebesseg=360, k_lassitas=80, k_legkisebb_sebe
     jobb.hold() #a jobb megáll(pont ott marad a pozíciója)
 
 def jobb_feltet(angle, speed = 400): #létrehozunk egy jobb_feltet nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a jobb feltét motorra vonatkozik
-    feltet_jobb.run_angle(speed, angle*jobb_attet)
+    feltet_jobb.run_angle(speed, angle*jobb_attet) #a feltet_jobbot lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a jobb_atettel
 
 def bal_feltet(angle, speed = 400): #létrehozunk egy bal_feltet nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a bal feltét motorra vonatkozik
-    feltet_bal.run_angle(speed, angle*bal_attet)
+    feltet_bal.run_angle(speed, angle*bal_attet) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel
 
 def jobb_feltet_hatter(angle, speed = 400): #létrehozunk egy jobb_feltet_hatter nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a jobb feltét motorra vonatkozik és ez mozgás közben is működik
-    feltet_jobb.run_angle(speed, angle*jobb_attet, wait=False)
+    feltet_jobb.run_angle(speed, angle*jobb_attet, wait=False) #a feltet_jobbat lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a jobb_atettel és itt a nem vár hanem lefut hatterben
 
 def bal_feltet_hatter(angle, speed = 400): #létrehozunk egy bal_feltet_hatter nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a bal feltét motorra vonatkozik és ez mozgás közben
-    feltet_bal.run_angle(speed, angle*bal_attet, wait=False)
+    feltet_bal.run_angle(speed, angle*bal_attet, wait=False) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel és itt a nem vár hanem lefut hatterben
 
-hub.system.set_stop_button(Button.BLUETOOTH)
+hub.system.set_stop_button(Button.BLUETOOTH) #a leállító gombot berakjuk a bluetooth gombra
 
-hub.display.number(1)
+hub.display.number(1) #kiirja az 1-es számot, mert az elején az 1-es futás van
 
-def futas_0():
-    jobb_attet = 12/20
-    bal_attet = 12/20
+def futas_1(): #létrehozunk egy futas_1 nevü függvényt
+    global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
+    jobb_attet = 12/20 #a jobb_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
+    bal_attet = 12/20 #a bal_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
     print("futas1")
  
-def futas_1():
+def futas_2(): #létrehozunk egy futas_2 nevü függvényt
+    global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
     print("futas2")
  
-def futas_2():
-    bal_attet = (12/20)*(20/28)*(28/36)
+def futas_3(): #létrehozunk egy futas_3 nevü függvényt
+    global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
+    bal_attet = (12/20)*(20/28)*(28/36) 
     print("futas3")
  
-def futas_3():
+def futas_4(): #létrehozunk egy futas_4 nevü függvényt
+    global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
     bal_attet = (12/20)*(20/28)*(28/36)
     print("futas4")
 
-def futas_4():
-    jobb_attet = 12/20
-    bal_attet = 12/20
+def futas_5(): #létrehozunk egy futas_5 nevü függvény
+    global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
+    jobb_attet = 12/20 #a jobb_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
+    bal_attet = 12/20 #a bal_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
     print("futas5")
  
-futas = 0
-futasok = [futas_0, futas_1, futas_2, futas_3, futas_4]
-max_futas = len(futasok)
+futas = 0 #létrehozzunk egy futas változót aminek 0 az értéke, ami számolja hányadik futás
+futasok = [futas_1, futas_2, futas_3, futas_4, futas_5] #létrehozunk egy futasok nevű tömböt és megadjuk az elemeit
+max_futas = len(futasok) #a max_futast létre hozzuk és az értéke a futasok elemszáma
 
-while True:
-    hub.display.number(futas + 1)
-    megnyomva = []
+while True: #egy ciklus ami addig fut amig nem lépünk ki
+    hub.display.number(futas + 1) #az agy irja ki a futast + 1
+    megnyomva = [] #létrehozunk egy tömböt aminek megnyomva a neve és üresre állítjuk
+    while not any(megnyomva): #amig nincs semmi a megnyomva tömbben, addig fusson
+        megnyomva = hub.buttons.pressed() #a megnyomva tömbön legyen az agyon megnyomott gombok  
+    lenyomott = StopWatch() #létrehozzuk a lenyomott változót, amin elindul a stopper
+    rezgett = False #létrehozzunk egy rezgett nevű változót amit beállítunk Hamisra
+    while hub.buttons.pressed(): #egy ciklus ami addig fut ameddig egy gomb le van nyomva
+        if lenyomott.time() > 500: #ha a lenyomott idő több mint fél másodperc
+            rezgett = True #a rezgett legyen Igaz
+            bal_feltet_hatter(45, speed=600) #bal_feltet_hattert elindítjuk 45 fokra, 600 sebességgel
+            jobb_feltet(45, speed=600) #jobb_feltet elindítjuk 45 fokra, 600 sebességgel
+            bal_feltet_hatter(-45, speed=600) #bal_feltet_hattert elindítjuk 45 fokra, 600 sebességgel
+            jobb_feltet(-45, speed=600) #jobb_feltet elindítjuk 45 fokra, 600 sebességgel
+        pass #menjen tovább
+    if rezgett: #ha rezgett már
+        continue  #menjen tovább
 
-    while not any(megnyomva):
-        megnyomva = hub.buttons.pressed()
-       
-    lenyomott = StopWatch()
-    rezgett = False
-    while hub.buttons.pressed():
-        if lenyomott.time() > 500:
-            rezgett = True
-            bal_feltet_hatter(45, speed=999)
-            jobb_feltet(45, speed=999)
-            bal_feltet_hatter(-45, speed=999)
-            jobb_feltet(-45, speed=999)
-        pass
-    if rezgett: continue
-
-
-    if Button.RIGHT in megnyomva:
-        futas = (futas + 1) % max_futas   # előző
-
-    if Button.LEFT in megnyomva:
-        futas = (futas - 1) % max_futas   # következő
-   
-    if Button.CENTER in megnyomva:
-
-        try:
-            hub.system.set_stop_button(Button.CENTER)
-            futasok[futas]()
-            futas = (futas + 1) % max_futas
-        except SystemExit:
-            bal.hold()
-            jobb.hold()
-            feltet_bal.hold()
-            feltet_jobb.hold()
-            while Button.CENTER in hub.buttons.pressed(): pass
-        hub.system.set_stop_button(Button.BLUETOOTH)
+    if Button.RIGHT in megnyomva: #ha a jobb gomb bent van a megnyomvában
+        futas = (futas + 1) % max_futas #a futas egyen egyenlő a futas + 1nak a maradéka a max_futassal
+    if Button.LEFT in megnyomva: #ha a bal gomb bent van a megnyomvában
+        futas = (futas - 1) % max_futas #a futas egyen egyenlő a futas + 1nak a maradéka a max_futassal
+    if Button.CENTER in megnyomva: #ha a középső gomb bent van a megnyomvában
+        try: #futassd le a kódot, ha kilép menj az exceptre
+            hub.system.set_stop_button(Button.CENTER) # a stop button legyen a középső gomb
+            futasok[futas]() #futassa le a futasok futas elemét
+            futas = (futas + 1) % max_futas #a futas egyen egyenlő a futas + 1nak a maradéka a max_futassal
+        except SystemExit: #ha ki akar lépni ezt csináld
+            bal.hold() #bal áljon le
+            jobb.hold() #jobb áljon le
+            feltet_bal.hold() #feltet_bal álljon le
+            feltet_jobb.hold() #feltet_jobb álljon le
+            while Button.CENTER in hub.buttons.pressed(): #a középső gomb megvan nyomva addig
+                pass #menjen tovább
+        hub.system.set_stop_button(Button.BLUETOOTH) # a stop button legyen a bluetooth
