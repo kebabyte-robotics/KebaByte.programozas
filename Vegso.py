@@ -88,23 +88,78 @@ hub.display.number(1) #kiirja az 1-es számot, mert az elején az 1-es futás va
 
 def futas_1(): #létrehozunk egy futas_1 nevü függvényt
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
-    jobb_attet = 12/20 #a jobb_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
-    bal_attet = 12/20 #a bal_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
-    print("futas1")
- 
+    jobb_attet = (12/12)*(12/20) #a jobb_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
+    bal_attet = (12/12)*(12/20) #a bal_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
+    egyenes(50)
 def futas_2(): #létrehozunk egy futas_2 nevü függvényt
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
-    print("futas2")
+    jobb_attet = 1
+    bal_attet = 1
+    egyenes(61)
+    kanyarodas(25)
+    egyenes(339)
+    kanyarodas(-25)
+    egyenes(321, e_legkisebb_sebesseg=700, e_legnagyobb_sebesseg=1000)
+    kanyarodas(-34)
+    egyenes(29)
+    kanyarodas(55)
+    egyenes(21)
  
 def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
-    bal_attet = (12/20)*(20/28)*(28/36) 
-    print("futas3")
+    bal_attet = (12/20)*(20/28)*(28/36)*(-1)
+    jobb_attet = 1
+    egyenes(370, e_korekcio=0.007)
+    jobb_feltet(180, 999)
+    jobb_feltet(-180, 999)
+    wait(100)
+    jobb_feltet(230, 999)
+    jobb_feltet(-270, 999)
+    wait(100)
+    jobb_feltet(230, 999)
+    jobb_feltet(-270, 999)
+    wait(100)
+    jobb_feltet(240, 999)
+    jobb_feltet(-320, 999)
+    kanyarodas(-32)
+    egyenes(230)
+    kanyarodas(64)
+    egyenes(29)
+    kanyarodas(-35)
+    egyenes(36)
+    kanyarodas(-17, k_legkisebb_sebesseg=150, k_lassitas=16)
+    egyenes(-35)
+    kanyarodas(25)
+    egyenes(-135, e_korekcio=0.005)
+    kanyarodas(-136)
+    egyenes(330)
+    kanyarodas(60)
+    jobb_feltet(250)
+    kanyarodas(-160)
+    egyenes(330)
  
 def futas_4(): #létrehozunk egy futas_4 nevü függvényt
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
-    bal_attet = (12/20)*(20/28)*(28/36)
-    print("futas4")
+    bal_attet = (12/12)*(12/20)
+    jobb_attet = 1
+    egyenes(230)
+    kanyarodas(35)
+    egyenes(495)
+    kanyarodas(-81)
+    egyenes(242, e_legnagyobb_sebesseg=950)
+    egyenes(-200)
+    kanyarodas(126)
+    egyenes(-300)
+    egyenes(61)
+    kanyarodas(-45)
+    egyenes(-15)
+    kanyarodas(-59)
+    egyenes(-10)
+    bal_feltet(2200)
+    kanyarodas(65)
+    egyenes(150)
+    kanyarodas(-25)
+    egyenes(-950)
 
 def futas_5(): #létrehozunk egy futas_5 nevü függvény
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
