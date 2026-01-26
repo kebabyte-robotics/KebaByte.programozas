@@ -9,6 +9,8 @@ jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE) #a motort ami az F portba van e
 feltet_bal = Motor(Port.E) #a feltét motort ami az E portba van elnevezzük feltet_balnak és a fogaskerék áttét 12, 12, 20
 feltet_jobb = Motor(Port.A)  #a feltét motort ami az A portba van elnevezzük feltet_jobbnak és a fogaskerék áttét 12, 12, 20
 
+while not hub.imu.ready(): hub.display.char("x")
+
 hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
 irany = 0 #létrehozunk egy irany nevű változót aminek 0 értéket adunk
 jobb_attet = 1 #létrehozunk egy jobb_attet nevű változót aminek 1 értéket adunk, ez fogja számolni a fogaskerék áttéteket
