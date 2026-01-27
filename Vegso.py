@@ -9,6 +9,8 @@ jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE) #a motort ami az F portba van e
 feltet_bal = Motor(Port.E) #a feltét motort ami az E portba van elnevezzük feltet_balnak és a fogaskerék áttét 12, 12, 20
 feltet_jobb = Motor(Port.A)  #a feltét motort ami az A portba van elnevezzük feltet_jobbnak és a fogaskerék áttét 12, 12, 20
 
+while not hub.imu.ready(): hub.display.char("x")
+
 hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
 irany = 0 #létrehozunk egy irany nevű változót aminek 0 értéket adunk
 jobb_attet = 1 #létrehozunk egy jobb_attet nevű változót aminek 1 értéket adunk, ez fogja számolni a fogaskerék áttéteket
@@ -90,11 +92,60 @@ def futas_1(): #létrehozunk egy futas_1 nevü függvényt
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
     jobb_attet = (12/12)*(12/20) #a jobb_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
     bal_attet = (12/12)*(12/20) #a bal_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
-    egyenes(50)
+    hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
+    jobb_feltet_hatter (95)
+    egyenes (650, e_legkisebb_sebesseg=650)
+    egyenes (-164, e_korekcio=0.001)
+    kanyarodas (40)
+    egyenes (250)
+    kanyarodas (-86.5)
+    egyenes (70, 20)
+    jobb_feltet_hatter (-10)
+    egyenes (72)
+    jobb_feltet (-100)
+    egyenes (55)
+    kanyarodas (6)
+    jobb_feltet (50)
+    egyenes (-30)
+    jobb_feltet (150, speed=600)
+    egyenes (-70)
+    jobb_feltet_hatter (100)
+    bal_feltet (-180)
+    kanyarodas (47, k_legkisebb_sebesseg=300)
+    egyenes (-1000, e_legkisebb_sebesseg=800, e_legnagyobb_sebesseg=900)
+ 
 def futas_2(): #létrehozunk egy futas_2 nevü függvényt
+    global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
+    jobb_attet = (12/12)*(12/20) #a jobb_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
+    bal_attet = (12/12)*(12/20) #a bal_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
+    hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
+    jobb_feltet_hatter (-100)
+    egyenes (960)
+    kanyarodas (91)
+    jobb_feltet (110)
+    egyenes (110)
+    jobb_feltet (-300, 200)
+    egyenes (-20)
+    jobb_feltet_hatter (120)
+    kanyarodas (47)
+    egyenes (280)
+    jobb_feltet (-160, speed=500)
+    egyenes (-40)
+    kanyarodas (-55)
+    jobb_feltet_hatter (80)
+    egyenes (300)
+    kanyarodas (30)
+    egyenes (150)
+    kanyarodas (-30)
+    egyenes (400)
+    kanyarodas (60)
+    egyenes (500)
+ 
+def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
     jobb_attet = 1
     bal_attet = 1
+    hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     egyenes(61)
     kanyarodas(25)
     egyenes(339)
@@ -102,14 +153,15 @@ def futas_2(): #létrehozunk egy futas_2 nevü függvényt
     egyenes(321, e_legkisebb_sebesseg=700, e_legnagyobb_sebesseg=1000)
     kanyarodas(-34)
     egyenes(29)
-    kanyarodas(55)
-    egyenes(21)
+    kanyarodas(58)
+    egyenes(55)
  
-def futas_3(): #létrehozunk egy futas_3 nevü függvényt
+def futas_4(): #létrehozunk egy futas_4 nevü függvényt
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
-    bal_attet = (12/20)*(20/28)*(28/36)*(-1)
+    bal_attet = (12/12)*(12/20)
     jobb_attet = 1
-    egyenes(370, e_korekcio=0.007)
+    hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
+    egyenes(370, e_korekcio=0.001)
     jobb_feltet(180, 999)
     jobb_feltet(-180, 999)
     wait(100)
@@ -124,7 +176,7 @@ def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     kanyarodas(-32)
     egyenes(230)
     kanyarodas(64)
-    egyenes(29)
+    egyenes(24)
     kanyarodas(-35)
     egyenes(36)
     kanyarodas(-17, k_legkisebb_sebesseg=150, k_lassitas=16)
@@ -137,22 +189,23 @@ def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     jobb_feltet(250)
     kanyarodas(-160)
     egyenes(330)
- 
-def futas_4(): #létrehozunk egy futas_4 nevü függvényt
+
+def futas_5(): #létrehozunk egy futas_5 nevü függvény
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
     bal_attet = (12/12)*(12/20)
     jobb_attet = 1
-    egyenes(230)
+    hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
+    egyenes(230 )
     kanyarodas(35)
     egyenes(495)
     kanyarodas(-81)
-    egyenes(242, e_legnagyobb_sebesseg=950)
-    egyenes(-200)
+    egyenes(237, e_legnagyobb_sebesseg=950)
+    egyenes(-215)
     kanyarodas(126)
     egyenes(-300)
     egyenes(61)
     kanyarodas(-45)
-    egyenes(-15)
+    egyenes(-10)
     kanyarodas(-59)
     egyenes(-10)
     bal_feltet(2200)
@@ -160,12 +213,6 @@ def futas_4(): #létrehozunk egy futas_4 nevü függvényt
     egyenes(150)
     kanyarodas(-25)
     egyenes(-950)
-
-def futas_5(): #létrehozunk egy futas_5 nevü függvény
-    global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
-    jobb_attet = 12/20 #a jobb_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
-    bal_attet = 12/20 #a bal_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
-    print("futas5")
  
 futas = 0 #létrehozzunk egy futas változót aminek 0 az értéke, ami számolja hányadik futás
 futasok = [futas_1, futas_2, futas_3, futas_4, futas_5] #létrehozunk egy futasok nevű tömböt és megadjuk az elemeit
