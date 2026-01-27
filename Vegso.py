@@ -42,7 +42,7 @@ def egyenes(e_tavolsag, e_legkisebb_sebesseg=40, e_gyorsitas=40, e_korekcio=0.01
             e_mostani_sebesseg = max(e_ratio * e_legnagyobb_sebesseg, e_legkisebb_sebesseg) * e_jelzo ##az e_mostani_sebesseg legyen a max(vagyis a nagyobb) az e_legkisebb_sebesseg(hogy ne menjen lassabban) vagy a e_ratio*e_legnagyobb_sebesseg és ez megszroozva az e_jelzo-vel ami 1 vagy -1, hogy pozitiv vagy negativ legyen
         else: #ha az előzők közül egyik sem(nem gyorsít sem lassít)
             e_mostani_sebesseg = e_legnagyobb_sebesseg * e_jelzo #az e_mostani_sebesseg legyen egyenlő az e_legnagyobb_sebesseg * e_jelzo, ami 1 vagy -1 lehet, ami pozitivvá/negatívvá alakítja a számot
-        e_iranyelteres = (irany - hub.imu.heading('3D')) * e_korekcio #az e_iranyelteres legyen egyenlő az irany(merre kellene mennie) - a tényleges mostani fok * az e_korekcio-val(azért kell korekcio hogy finoman korigálja, nem egyben nagyot)
+        e_iranyelteres = (irany - hub.imu.heading()) * e_korekcio #az e_iranyelteres legyen egyenlő az irany(merre kellene mennie) - a tényleges mostani fok * az e_korekcio-val(azért kell korekcio hogy finoman korigálja, nem egyben nagyot)
         e_korekciomertek = e_mostani_sebesseg * e_iranyelteres * e_jelzo #az e_korekcio mertek legyen egyenlő az e_mostani_sebesseg * e_iranyelteres * e_jelzo(1,-1) ez lesz a mérték amennyivel korigálni kell
         bal.run (e_mostani_sebesseg - e_korekciomertek) #a bal az e_mostani_sebesseg - e_korekciomertek(azért -, mert ha jobbra tér akkor + eltérés akkor abból - lesz, vagyis lassít, ha balra tér el akkor - és -- az + vagyis gyorsít)
         jobb.run(e_mostani_sebesseg + e_korekciomertek) #a jobb az e_mostani_sebesseg + e_korekciomertek (azért +, mert ha jobbra tér el akkor + eltérés abból + marad, vagyis gyorsít, ha balra tér el akkor - és az - marad vagyis lassít)
@@ -52,13 +52,13 @@ def egyenes(e_tavolsag, e_legkisebb_sebesseg=40, e_gyorsitas=40, e_korekcio=0.01
 
 
 def kanyarodas(k_fok, k_legnagyobb_sebesseg=360, k_lassitas=80, k_legkisebb_sebesseg=50): #létrehozunk egy kanyarodas nevü függvényt, paramétereket adunk meg amit használni fogunk a függvényben, a k_fok-ot(fokban), k_legnagyobb_sebesseg, k_lassitas(fok-ban), k_legkisebb_sebesseg, az alapból beírt paramétrek csak átlagban működnek
-    k_alap_fok = hub.imu.heading('3D') #a k_alap_fok értéke legyen egyenlő a gyro értékével, azért kell,h ogy tudjon az előző tévedések alapján korigálni
+    k_alap_fok = hub.imu.heading() #a k_alap_fok értéke legyen egyenlő a gyro értékével, azért kell,h ogy tudjon az előző tévedések alapján korigálni
     global irany #engedélyezzük a függvénynek az irany változó használatát a függvényen belül
     k_cel_fok = irany+k_fok #a k_cel_fok = az irány(amerre kellene menni)+k_fok (az irány azért kell hogy az előző tévedést kijavítja)
     irany = k_cel_fok #az irany legyen egyenlő a k_cel_fok
     k_cel_fok -= k_alap_fok #a k_cel_fok-ból vonjuk ki a k_alap_fokot vagyi a tévedést
     while True: #addig fut a ciklus amíg ki nem lépünk
-        k_megtett_fokok = hub.imu.heading('3D') - k_alap_fok #a k_megtett_fokok legyen egyenlő a mostani gyro - a k_alap_fok
+        k_megtett_fokok = hub.imu.heading() - k_alap_fok #a k_megtett_fokok legyen egyenlő a mostani gyro - a k_alap_fok
         k_hatralevo_fokok = k_cel_fok - k_megtett_fokok #a k_hatralevo_fokok legyen egyenlő  a k_cel_fok - k_megtett_fokok
         k_jelzo = k_hatralevo_fokok/abs(k_hatralevo_fokok) #a k_hatralevo_fokokat elosztjuk a k_hatralevo_fokok abszolutértékével, ha a k_hatralevo_fokok pozitiv akkor 1, ha negatív akkor -1 lesz a K_jelző értéke(pl 10/10=1 -10/10=-1)
         k_hatralevo_fokok = abs(k_hatralevo_fokok) #a k_hatralevo_fokok abszolut értéke legyen a k_hatralevo_fokok, azért kell hogy pozitiv legyen és a jelző már eltárolta, hogy negativ vagy pozitiv
@@ -140,7 +140,7 @@ while True: #egy ciklus ami addig fut amig nem lépünk ki
     hub.display.number(futas + 1) #az agy irja ki a futast + 1
     megnyomva = [] #létrehozunk egy tömböt aminek megnyomva a neve és üresre állítjuk
     while not any(megnyomva): #amig nincs semmi a megnyomva tömbben, addig fusson
-        print(hub.imu.heading('3D'))
+        print(hub.imu.heading())
         megnyomva = hub.buttons.pressed() #a megnyomva tömbön legyen az agyon megnyomott gombok  
     lenyomott = StopWatch() #létrehozzuk a lenyomott változót, amin elindul a stopper
     rezgett = False #létrehozzunk egy rezgett nevű változót amit beállítunk Hamisra
