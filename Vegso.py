@@ -73,6 +73,7 @@ def kanyarodas(k_fok, k_legnagyobb_sebesseg=360, k_lassitas=80, k_legkisebb_sebe
         jobb.run(k_mostani_sebesseg) #a jobb a k_mostani_sebesseg (azért +, mert ha jobbra forog akkor + eltérés abból + marad, vagyis elore megy, ha balra tér el akkor - és az - marad vagyis hatra megy)
     bal.hold() #a bal megáll(pont ott marad a pozíciója)
     jobb.hold() #a jobb megáll(pont ott marad a pozíciója)
+    wait(100)
 
 def jobb_feltet(angle, speed = 400): #létrehozunk egy jobb_feltet nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a jobb feltét motorra vonatkozik
     feltet_jobb.run_angle(speed, angle*jobb_attet) #a feltet_jobbot lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a jobb_atettel
@@ -96,6 +97,7 @@ def futas_1(): #létrehozunk egy futas_1 nevü függvényt
     jobb_attet = (12/12)*(12/20) #a jobb_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
     bal_attet = (12/12)*(12/20) #a bal_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
+    wait(200)
     #ez után ird
  
 def futas_2(): #létrehozunk egy futas_2 nevü függvényt
@@ -103,12 +105,15 @@ def futas_2(): #létrehozunk egy futas_2 nevü függvényt
     jobb_attet = (12/12)*(12/20) #a jobb_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
     bal_attet = (12/12)*(12/20) #a bal_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
+    wait(200)
     #ez után ird
  
 def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
     jobb_attet = 1
     bal_attet = 1
+    hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
+    wait(200)
     #ez után ird
  
 def futas_4(): #létrehozunk egy futas_4 nevü függvényt
@@ -116,6 +121,7 @@ def futas_4(): #létrehozunk egy futas_4 nevü függvényt
     bal_attet = (12/12)*(12/20)
     jobb_attet = 1
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
+    wait(200)
     #ez után ird
 
 def futas_5(): #létrehozunk egy futas_5 nevü függvény
@@ -123,6 +129,7 @@ def futas_5(): #létrehozunk egy futas_5 nevü függvény
     bal_attet = (12/12)*(12/20)*(20/28)*(28/36)*(36/28)*(28/12)
     jobb_attet = 1
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
+    wait(200)
     #ez után ird
  
 futas = 0 #létrehozzunk egy futas változót aminek 0 az értéke, ami számolja hányadik futás
