@@ -8,6 +8,8 @@ bal  = Motor(Port.B) #a motort ami a B portba van elnevezzük balnak és óra j�
 jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE) #a motort ami az F portba van elnevezzük balnak és óra járásával ellentétes irányba forog
 feltet_bal = Motor(Port.E) #a feltét motort ami az E portba van elnevezzük feltet_balnak és a fogaskerék áttét 12, 12, 20
 feltet_jobb = Motor(Port.A)  #a feltét motort ami az A portba van elnevezzük feltet_jobbnak és a fogaskerék áttét 12, 12, 20
+feltet_bal.control.limits(1000, 5000)
+feltet_jobb.control.limits(1000, 5000)
 
 while not hub.imu.ready(): hub.display.char("x")
 
@@ -229,12 +231,14 @@ while True: #egy ciklus ami addig fut amig nem lépünk ki
     lenyomott = StopWatch() #létrehozzuk a lenyomott változót, amin elindul a stopper
     rezgett = False #létrehozzunk egy rezgett nevű változót amit beállítunk Hamisra
     while hub.buttons.pressed(): #egy ciklus ami addig fut ameddig egy gomb le van nyomva
+        jobb_attet = 1
+        bal_attet = 1
         if lenyomott.time() > 500: #ha a lenyomott idő több mint fél másodperc
             rezgett = True #a rezgett legyen Igaz
-            bal_feltet_hatter(45, speed=600) #bal_feltet_hattert elindítjuk 45 fokra, 600 sebességgel
-            jobb_feltet(45, speed=600) #jobb_feltet elindítjuk 45 fokra, 600 sebességgel
-            bal_feltet_hatter(-45, speed=600) #bal_feltet_hattert elindítjuk 45 fokra, 600 sebességgel
-            jobb_feltet(-45, speed=600) #jobb_feltet elindítjuk 45 fokra, 600 sebességgel
+            bal_feltet_hatter(45, speed=900) #bal_feltet_hattert elindítjuk 45 fokra, 600 sebességgel
+            jobb_feltet(45, speed=900) #jobb_feltet elindítjuk 45 fokra, 600 sebességgel
+            bal_feltet_hatter(-45, speed=900) #bal_feltet_hattert elindítjuk 45 fokra, 600 sebességgel
+            jobb_feltet(-45, speed=900) #jobb_feltet elindítjuk 45 fokra, 600 sebességgel
         pass #menjen tovább
     if rezgett: #ha rezgett már
         continue  #menjen tovább
