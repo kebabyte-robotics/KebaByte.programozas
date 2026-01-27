@@ -140,7 +140,6 @@ while True: #egy ciklus ami addig fut amig nem lépünk ki
     hub.display.number(futas + 1) #az agy irja ki a futast + 1
     megnyomva = [] #létrehozunk egy tömböt aminek megnyomva a neve és üresre állítjuk
     while not any(megnyomva): #amig nincs semmi a megnyomva tömbben, addig fusson
-        print(hub.imu.heading())
         megnyomva = hub.buttons.pressed() #a megnyomva tömbön legyen az agyon megnyomott gombok  
     lenyomott = StopWatch() #létrehozzuk a lenyomott változót, amin elindul a stopper
     rezgett = False #létrehozzunk egy rezgett nevű változót amit beállítunk Hamisra
