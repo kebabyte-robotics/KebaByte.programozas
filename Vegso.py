@@ -96,34 +96,34 @@ def futas_1(): #létrehozunk egy futas_1 nevü függvényt
     jobb_attet = (12/12)*(12/20) #a jobb_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
     bal_attet = (12/12)*(12/20) #a bal_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
-    #ide
+    #ez után ird
  
 def futas_2(): #létrehozunk egy futas_2 nevü függvényt
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
     jobb_attet = (12/12)*(12/20) #a jobb_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
     bal_attet = (12/12)*(12/20) #a bal_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
-    #ide
+    #ez után ird
  
 def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
     jobb_attet = 1
     bal_attet = 1
-    #ide
+    #ez után ird
  
 def futas_4(): #létrehozunk egy futas_4 nevü függvényt
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
     bal_attet = (12/12)*(12/20)
     jobb_attet = 1
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
-    #ide
+    #ez után ird
 
 def futas_5(): #létrehozunk egy futas_5 nevü függvény
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
     bal_attet = (12/12)*(12/20)*(20/28)*(28/36)*(36/28)*(28/12)
     jobb_attet = 1
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
-    #ide
+    #ez után ird
  
 futas = 0 #létrehozzunk egy futas változót aminek 0 az értéke, ami számolja hányadik futás
 futasok = [futas_1, futas_2, futas_3, futas_4, futas_5] #létrehozunk egy futasok nevű tömböt és megadjuk az elemeit
