@@ -15,9 +15,6 @@ while not hub.imu.ready(): hub.display.char("x")
 
 hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
 irany = 0 #létrehozunk egy irany nevű változót aminek 0 értéket adunk
-jobb_attet = 1 #létrehozunk egy jobb_attet nevű változót aminek 1 értéket adunk, ez fogja számolni a fogaskerék áttéteket
-bal_attet = 1 #létrehozunk egy jobb_attet nevű változót aminek 1 értéket adunk, ez fogja számolni a fogaskerék áttéteket
-
 
 def egyenes(e_tavolsag, e_legkisebb_sebesseg=40, e_gyorsitas=40, e_korekcio=0.01, e_legnagyobb_sebesseg = 700, e_lassitas=80): #létrehozunk egy egyenes nevü függvényt, paramétereket adunk meg amit használni fogunk a függvényben, az e_tavolsagot, e_lassitast és a e_gyorsitast mm-be adjuk meg, az alap értékek csak átlagban működnek 
     global irany #engedélyezzük a függvénynek az irany változó használatát a függvényen belül
@@ -76,16 +73,16 @@ def kanyarodas(k_fok, k_legnagyobb_sebesseg=360, k_lassitas=80, k_legkisebb_sebe
     wait(100)
 
 def jobb_feltet(angle, speed = 400): #létrehozunk egy jobb_feltet nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a jobb feltét motorra vonatkozik
-    feltet_jobb.run_angle(speed, angle*jobb_attet) #a feltet_jobbot lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a jobb_atettel
+    feltet_jobb.run_angle(speed, angle) #a feltet_jobbot lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a jobb_atettel
 
 def bal_feltet(angle, speed = 400): #létrehozunk egy bal_feltet nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a bal feltét motorra vonatkozik
-    feltet_bal.run_angle(speed, angle*bal_attet) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel
+    feltet_bal.run_angle(speed, angle) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel
 
 def jobb_feltet_hatter(angle, speed = 400): #létrehozunk egy jobb_feltet_hatter nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a jobb feltét motorra vonatkozik és ez mozgás közben is működik
-    feltet_jobb.run_angle(speed, angle*jobb_attet, wait=False) #a feltet_jobbat lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a jobb_atettel és itt a nem vár hanem lefut hatterben
+    feltet_jobb.run_angle(speed, angle, wait=False) #a feltet_jobbat lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a jobb_atettel és itt a nem vár hanem lefut hatterben
 
 def bal_feltet_hatter(angle, speed = 400): #létrehozunk egy bal_feltet_hatter nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a bal feltét motorra vonatkozik és ez mozgás közben
-    feltet_bal.run_angle(speed, angle*bal_attet, wait=False) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel és itt a nem vár hanem lefut hatterben
+    feltet_bal.run_angle(speed, angle, wait=False) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel és itt a nem vár hanem lefut hatterben
 
 hub.system.set_stop_button(Button.BLUETOOTH) #a leállító gombot berakjuk a bluetooth gombra
 hub.display.number(1) #kiirja az 1-es számot, mert az elején az 1-es futás van
@@ -93,41 +90,26 @@ voltage = hub.battery.voltage()
 print(voltage)
 
 def futas_1(): #létrehozunk egy futas_1 nevü függvényt
-    global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
-    jobb_attet = (12/12)*(12/20) #a jobb_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
-    bal_attet = (12/12)*(12/20) #a bal_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
     #ez után ird
  
 def futas_2(): #létrehozunk egy futas_2 nevü függvényt
-    global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
-    jobb_attet = (12/12)*(12/20) #a jobb_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
-    bal_attet = (12/12)*(12/20) #a bal_attet legyen 12/20 ezek a fogaskerekeknek a fog száma és kiadja az arányt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
     #ez után ird
  
 def futas_3(): #létrehozunk egy futas_3 nevü függvényt
-    global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
-    jobb_attet = 1
-    bal_attet = 1
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
     #ez után ird
  
 def futas_4(): #létrehozunk egy futas_4 nevü függvényt
-    global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
-    bal_attet = (12/12)*(12/20)
-    jobb_attet = 1
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
     #ez után ird
 
 def futas_5(): #létrehozunk egy futas_5 nevü függvény
-    global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
-    bal_attet = (12/12)*(12/20)*(20/28)*(28/36)*(36/28)*(28/12)
-    jobb_attet = 1
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
     #ez után ird
@@ -144,8 +126,6 @@ while True: #egy ciklus ami addig fut amig nem lépünk ki
     lenyomott = StopWatch() #létrehozzuk a lenyomott változót, amin elindul a stopper
     rezgett = False #létrehozzunk egy rezgett nevű változót amit beállítunk Hamisra
     while hub.buttons.pressed(): #egy ciklus ami addig fut ameddig egy gomb le van nyomva
-        jobb_attet = 1
-        bal_attet = 1
         if lenyomott.time() > 500: #ha a lenyomott idő több mint fél másodperc
             rezgett = True #a rezgett legyen Igaz
             bal_feltet_hatter(45, speed=900) #bal_feltet_hattert elindítjuk 45 fokra, 600 sebességgel
