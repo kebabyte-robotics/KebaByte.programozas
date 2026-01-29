@@ -14,7 +14,8 @@ irany = 0 #létrehozunk egy irany nevű változót aminek 0 értéket adunk
 feltet_bal.control.limits(1000, 5000)
 feltet_jobb.control.limits(1000, 5000)
 
-while not hub.imu.ready(): hub.display.char("x")
+while not hub.imu.ready(): 
+    hub.display.char("x")
 
 def egyenes(e_tavolsag, e_legkisebb_sebesseg=40, e_gyorsitas=40, e_korekcio=0.01, e_legnagyobb_sebesseg = 700, e_lassitas=80): #létrehozunk egy egyenes nevü függvényt, paramétereket adunk meg amit használni fogunk a függvényben, az e_tavolsagot, e_lassitast és a e_gyorsitast mm-be adjuk meg, az alap értékek csak átlagban működnek 
     global irany #engedélyezzük a függvénynek az irany változó használatát a függvényen belül
