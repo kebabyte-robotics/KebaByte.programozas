@@ -13,6 +13,9 @@ hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
 irany = 0 #létrehozunk egy irany nevű változót aminek 0 értéket adunk
 feltet_bal.control.limits(1000, 5000)
 feltet_jobb.control.limits(1000, 5000)
+bal.control.limits(2000, 5000)
+jobb.control.limits(2000, 5000)
+
 
 while not hub.imu.ready(): 
     hub.display.char("x")
