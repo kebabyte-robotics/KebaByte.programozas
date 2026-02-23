@@ -6,19 +6,19 @@ from pybricks.tools import * #beimportálja a toolsokat
 hub = PrimeHub() #az agyat elnevezi hubnak
 bal  = Motor(Port.B) #a motort ami a B portba van elnevezzük balnak és óra járásával megegyező irányba forog
 jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE) #a motort ami az F portba van elnevezzük balnak és óra járásával ellentétes irányba forog
-feltet_bal = Motor(Port.E, gears=[12, 12, 20]) #a feltét motort ami az E portba van elnevezzük feltet_balnak és a fogaskerék áttét 12, 12, 20
-feltet_jobb = Motor(Port.A, gears=[12, 12, 20])  #a feltét motort ami az A portba van elnevezzük feltet_jobbnak és a fogaskerék áttét 12, 12, 20
+feltet_bal = Motor(Port.E) #a feltét motort ami az E portba van elnevezzük feltet_balnak és a fogaskerék áttét 12, 12, 20
+feltet_jobb = Motor(Port.A)  #a feltét motort ami az A portba van elnevezzük feltet_jobbnak és a fogaskerék áttét 12, 12, 20
+feltet_bal.control.limits(1000, 6500)
+feltet_jobb.control.limits(1000, 6500)
+bal.control.limits(2000, 5500)
+jobb.control.limits(2000, 5500)
+while not hub.imu.ready(): hub.display.char("x")
 
 hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
 irany = 0 #létrehozunk egy irany nevű változót aminek 0 értéket adunk
-feltet_bal.control.limits(1000, 5000)
-feltet_jobb.control.limits(1000, 5000)
-bal.control.limits(2000, 5000)
-jobb.control.limits(2000, 5000)
+jobb_attet = 1 #létrehozunk egy jobb_attet nevű változót aminek 1 értéket adunk, ez fogja számolni a fogaskerék áttéteket
+bal_attet = 1 #létrehozunk egy jobb_attet nevű változót aminek 1 értéket adunk, ez fogja számolni a fogaskerék áttéteket
 
-
-while not hub.imu.ready(): 
-    hub.display.char("x")
 
 def egyenes(e_tavolsag, e_legkisebb_sebesseg=40, e_gyorsitas=40, e_korekcio=0.01, e_legnagyobb_sebesseg = 700, e_lassitas=80): #létrehozunk egy egyenes nevü függvényt, paramétereket adunk meg amit használni fogunk a függvényben, az e_tavolsagot, e_lassitast és a e_gyorsitast mm-be adjuk meg, az alap értékek csak átlagban működnek 
     global irany #engedélyezzük a függvénynek az irany változó használatát a függvényen belül
@@ -77,72 +77,122 @@ def kanyarodas(k_fok, k_legnagyobb_sebesseg=360, k_lassitas=80, k_legkisebb_sebe
     wait(100)
 
 def jobb_feltet(angle, speed = 400): #létrehozunk egy jobb_feltet nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a jobb feltét motorra vonatkozik
-    feltet_jobb.run_angle(speed, angle)
+    feltet_jobb.run_angle(speed, angle*jobb_attet) #a feltet_jobbot lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a jobb_atettel
 
 def bal_feltet(angle, speed = 400): #létrehozunk egy bal_feltet nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a bal feltét motorra vonatkozik
-    feltet_bal.run_angle(speed, angle)
+    feltet_bal.run_angle(speed, angle*bal_attet) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel
 
 def jobb_feltet_hatter(angle, speed = 400): #létrehozunk egy jobb_feltet_hatter nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a jobb feltét motorra vonatkozik és ez mozgás közben is működik
-    feltet_jobb.run_angle(speed, angle, wait=False)
+    feltet_jobb.run_angle(speed, angle*jobb_attet, wait=False) #a feltet_jobbat lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a jobb_atettel és itt a nem vár hanem lefut hatterben
 
 def bal_feltet_hatter(angle, speed = 400): #létrehozunk egy bal_feltet_hatter nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a bal feltét motorra vonatkozik és ez mozgás közben
-    feltet_bal.run_angle(speed, angle, wait=False)
+    feltet_bal.run_angle(speed, angle*bal_attet, wait=False) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel és itt a nem vár hanem lefut hatterben
 
-voltage = hub.battery.voltage()
-print(voltage)
 hub.system.set_stop_button(Button.BLUETOOTH) #a leállító gombot berakjuk a bluetooth gombra
 hub.display.number(1) #kiirja az 1-es számot, mert az elején az 1-es futás van
+voltage = hub.battery.voltage()
+print(voltage)
 
 def futas_1(): #létrehozunk egy futas_1 nevü függvényt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
     #ez után ird
- 
+    bal_feltet(-145)
+
+
 def futas_2(): #létrehozunk egy futas_2 nevü függvényt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
-    #ez után ird
+    #ez után irdjobb_feltet_hatter (-240)
+    egyenes(666, e_legnagyobb_sebesseg=800)
+    jobb_feltet(255, speed=200)
+    bal_feltet(2200, speed=888)
+    egyenes(-15)
+    jobb_feltet(-230)
+    egyenes(-777, e_legnagyobb_sebesseg=999)
  
 def futas_3(): #létrehozunk egy futas_3 nevü függvényt
+    global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
+    jobb_attet = 1
+    bal_attet = 1
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
     #ez után ird
- 
+    bal_feltet_hatter(-400)
+    egyenes(120)
+    kanyarodas(56.6)
+    egyenes(825)
+    jobb_feltet(-230, speed=600)
+    kanyarodas(-35)
+    jobb_feltet_hatter(190)
+    egyenes(370)
+    egyenes(-84)
+    jobb_feltet_hatter(-235)
+    kanyarodas(99)
+    egyenes(189)
+    egyenes(-129)
+    jobb_feltet(245)
+    kanyarodas(-46.4)
+    egyenes(235)
+    kanyarodas(17)
+    egyenes(-45)
+    bal_feltet(395)
+    egyenes(40)
+    kanyarodas(15)
+    egyenes(25)
+    egyenes(-25)
+    kanyarodas(-13)
+    egyenes(-115)
+    kanyarodas(9)
+    bal_feltet(-355)
+    kanyarodas(19)
+    egyenes(300)
+    kanyarodas(-69)
+    egyenes(125)
+    bal_feltet(355, speed=659)
+    bal_feltet(-350)
+    egyenes(-20)
+    kanyarodas(72.69)
+    egyenes(75)
+    jobb_feltet(-210, speed=999)
+    jobb_feltet(230, speed=999)
+    jobb_feltet(-230, speed=999)
+    jobb_feltet(230, speed=999)
+    jobb_feltet(-230, speed=999)
+    jobb_feltet(240, speed=999)
+    kanyarodas(53)
+    egyenes(690, e_legkisebb_sebesseg=400, e_legnagyobb_sebesseg=999)
+
+    
+
 def futas_4(): #létrehozunk egy futas_4 nevü függvényt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
     #ez után ird
-    egyenes(370, e_korekcio=0.007)
-    jobb_feltet(180, 999)
-    jobb_feltet(-180, 999)
+    egyenes(120)
+    kanyarodas(-49.5)
+    jobb_feltet_hatter(-500, speed=999)
+    egyenes(243)
+    kanyarodas(-23, k_legnagyobb_sebesseg=720, k_legkisebb_sebesseg=360)
+    egyenes(-30)
+    kanyarodas(-11)
+    jobb_feltet(350, speed=999)
+    egyenes(200)
+    kanyarodas(4.3)
+    jobb_feltet(-360, speed=995)
     wait(100)
-    jobb_feltet(230, 999)
-    jobb_feltet(-270, 999)
-    wait(100)
-    jobb_feltet(230, 999)
-    jobb_feltet(-270, 999)
-    wait(100)
-    jobb_feltet(240, 999)
-    jobb_feltet(-320, 999)
-    kanyarodas(-32)
-    egyenes(233)
-    kanyarodas(64, k_legnagyobb_sebesseg=400)
-    egyenes(23)
-    kanyarodas(-31)
-    egyenes(-13)
-    kanyarodas(-7)
-    egyenes(26)
-    kanyarodas(-13, k_legkisebb_sebesseg=150, k_lassitas=16)
-    egyenes(-35)
-    kanyarodas(25)
-    egyenes(-137, e_korekcio=0.005)
-    kanyarodas(-136)
-    egyenes(330)
-    kanyarodas(59.5)
-    egyenes(14)
-    jobb_feltet(250)
-    kanyarodas(-160)
-    egyenes(330)
+    kanyarodas(-25, k_legkisebb_sebesseg=180)
+    egyenes(360)
+    kanyarodas(55.5, k_legkisebb_sebesseg=180)
+    egyenes(150)
+    jobb_feltet(210, speed=400)
+    kanyarodas(18)
+    egyenes(24)
+    bal_feltet(214)
+    egyenes(-211)
+
+
+
 
 def futas_5(): #létrehozunk egy futas_5 nevü függvény
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
@@ -151,21 +201,28 @@ def futas_5(): #létrehozunk egy futas_5 nevü függvény
     egyenes(230)
     kanyarodas(35)
     egyenes(495)
-    kanyarodas(-81)
-    egyenes(242, e_legnagyobb_sebesseg=950)
+    kanyarodas(-79)
+    egyenes(263, e_legnagyobb_sebesseg=999)
     egyenes(-200)
     kanyarodas(126)
-    egyenes(-300)
+    egyenes(-310)
     egyenes(61)
     kanyarodas(-45)
     egyenes(-21)
     kanyarodas(-56)
     egyenes(10)
-    kanyarodas(-5)
-    egyenes(-11)
+    kanyarodas(-3)
+    egyenes(-21)
     bal_feltet(2200)
-    egyenes
-    kanyarodas(65)
+    egyenes(11)
+    kanyarodas(63)
+    egyenes(131)
+
+    """ egyenes(230)
+    kanyarodas(35)
+    egyenes(205)
+    kanyarodas(-35)
+    egyenes(270) """
  
 futas = 0 #létrehozzunk egy futas változót aminek 0 az értéke, ami számolja hányadik futás
 futasok = [futas_1, futas_2, futas_3, futas_4, futas_5] #létrehozunk egy futasok nevű tömböt és megadjuk az elemeit
@@ -196,7 +253,6 @@ while True: #egy ciklus ami addig fut amig nem lépünk ki
     if Button.CENTER in megnyomva: #ha a középső gomb bent van a megnyomvában
         irany = 0
         hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
-
         try: #futassd le a kódot, ha kilép menj az exceptre
             hub.system.set_stop_button(Button.CENTER) # a stop button legyen a középső gomb
             futasok[futas]() #futassa le a futasok futas elemét
