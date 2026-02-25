@@ -162,7 +162,7 @@ def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     jobb_feltet(240, speed=999)
     kanyarodas(53)
     egyenes(690, e_legkisebb_sebesseg=400, e_legnagyobb_sebesseg=999)
-
+    
     
 
 def futas_4(): #létrehozunk egy futas_4 nevü függvényt
@@ -258,10 +258,10 @@ while True: #egy ciklus ami addig fut amig nem lépünk ki
             futasok[futas]() #futassa le a futasok futas elemét
             futas = (futas + 1) % max_futas #a futas egyen egyenlő a futas + 1nak a maradéka a max_futassal
         except SystemExit: #ha ki akar lépni ezt csináld
-            bal.hold() #bal áljon le
-            jobb.hold() #jobb áljon le
-            feltet_bal.hold() #feltet_bal álljon le
-            feltet_jobb.hold() #feltet_jobb álljon le
             while Button.CENTER in hub.buttons.pressed(): #a középső gomb megvan nyomva addig
                 pass #menjen tovább
+        bal.hold() #bal áljon le
+        jobb.hold() #jobb áljon le
+        feltet_bal.stop() #feltet_bal álljon le
+        feltet_jobb.stop() #feltet_jobb álljon le
         hub.system.set_stop_button(Button.BLUETOOTH) # a stop button legyen a bluetooth
