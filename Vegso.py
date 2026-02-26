@@ -2,7 +2,7 @@ from pybricks.hubs import * #beimportálja az agyat
 from pybricks.pupdevices import * #beimportálja a pupdevicesokat
 from pybricks.parameters import * #beimportálja a paramétereket
 from pybricks.tools import * #beimportálja a toolsokat
-
+ 
 hub = PrimeHub() #az agyat elnevezi hubnak
 bal  = Motor(Port.B) #a motort ami a B portba van elnevezzük balnak és óra járásával megegyező irányba forog
 jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE) #a motort ami az F portba van elnevezzük balnak és óra járásával ellentétes irányba forog
@@ -13,14 +13,14 @@ feltet_jobb.control.limits(1000, 6500)
 bal.control.limits(2000, 5500)
 jobb.control.limits(2000, 5500)
 while not hub.imu.ready(): hub.display.char("x")
-
+ 
 hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
 irany = 0 #létrehozunk egy irany nevű változót aminek 0 értéket adunk
 jobb_attet = 1 #létrehozunk egy jobb_attet nevű változót aminek 1 értéket adunk, ez fogja számolni a fogaskerék áttéteket
 bal_attet = 1 #létrehozunk egy jobb_attet nevű változót aminek 1 értéket adunk, ez fogja számolni a fogaskerék áttéteket
-
-
-def egyenes(e_tavolsag, e_legkisebb_sebesseg=40, e_gyorsitas=40, e_korekcio=0.01, e_legnagyobb_sebesseg = 700, e_lassitas=80): #létrehozunk egy egyenes nevü függvényt, paramétereket adunk meg amit használni fogunk a függvényben, az e_tavolsagot, e_lassitast és a e_gyorsitast mm-be adjuk meg, az alap értékek csak átlagban működnek 
+ 
+ 
+def egyenes(e_tavolsag, e_legkisebb_sebesseg=40, e_gyorsitas=40, e_korekcio=0.01, e_legnagyobb_sebesseg = 700, e_lassitas=80): #létrehozunk egy egyenes nevü függvényt, paramétereket adunk meg amit használni fogunk a függvényben, az e_tavolsagot, e_lassitast és a e_gyorsitast mm-be adjuk meg, az alap értékek csak átlagban működnek
     global irany #engedélyezzük a függvénynek az irany változó használatát a függvényen belül
     bal.reset_angle(0) #a bal szögét 0-ra állítjuk
     jobb.reset_angle(0) #a jobb szögét 0-ra állítjuk
@@ -33,7 +33,7 @@ def egyenes(e_tavolsag, e_legkisebb_sebesseg=40, e_gyorsitas=40, e_korekcio=0.01
         e_jelzo = e_hatralevo_tavolsag/abs(e_hatralevo_tavolsag) #az e_hatralevo_tavolsagot elosztjuk az e_hatralevo_tavolsag abszolutértékével, ha az e_hatralevo_tavolsag pozitiv akkor 1, ha negatív akkor -1 lesz a e_jelző értéke(pl 10/10=1 -10/10=-1)
         e_megtett_tavolsag = abs(e_megtett_tavolsag) #az e_megtett_tavolsag abszolut értéke legyen az e_megtett_tavolsag, azért kell hogy pozitiv legyen és a jelző már eltárolta, hogy negativ vagy pozitiv
         e_hatralevo_tavolsag = abs(e_hatralevo_tavolsag) #az e_hatralevo_tavolsag abszolut értéke legyen az e_hatralevo_tavolsag, azért kell hogy pozitiv legyen és a jelző már eltárolta, hogy negativ vagy pozitiv
-        if e_hatralevo_tavolsag < 3: #ha e_hatralevo_tavolsag kevesebb, mint 3 motorfok 
+        if e_hatralevo_tavolsag < 3: #ha e_hatralevo_tavolsag kevesebb, mint 3 motorfok
             break #akkor álj, vagyis lépjen ki a while-ból
         if e_hatralevo_tavolsag < e_lassitas : #ha az e_hatralevo_tavolsag kevesebb, mint az e_lassitas(ha már a lassításba van)
             e_ratio = e_hatralevo_tavolsag / e_lassitas #akkor a lassitas ratioja az e_hatralevo_tavolsag/e_lassitas, ez legyen az e_ratio ez a szám 0-1ig van
@@ -49,9 +49,9 @@ def egyenes(e_tavolsag, e_legkisebb_sebesseg=40, e_gyorsitas=40, e_korekcio=0.01
         jobb.run(e_mostani_sebesseg + e_korekciomertek) #a jobb az e_mostani_sebesseg + e_korekciomertek (azért +, mert ha jobbra tér el akkor + eltérés abból + marad, vagyis gyorsít, ha balra tér el akkor - és az - marad vagyis lassít)
     bal.hold() #a bal megáll(pont ott marad a pozíciója)
     jobb.hold()#a jobb megáll(pont ott marad a pozíciója)
-
-
-
+ 
+ 
+ 
 def kanyarodas(k_fok, k_legnagyobb_sebesseg=360, k_lassitas=80, k_legkisebb_sebesseg=50): #létrehozunk egy kanyarodas nevü függvényt, paramétereket adunk meg amit használni fogunk a függvényben, a k_fok-ot(fokban), k_legnagyobb_sebesseg, k_lassitas(fok-ban), k_legkisebb_sebesseg, az alapból beírt paramétrek csak átlagban működnek
     k_alap_fok = hub.imu.heading() #a k_alap_fok értéke legyen egyenlő a gyro értékével, azért kell,h ogy tudjon az előző tévedések alapján korigálni
     global irany #engedélyezzük a függvénynek az irany változó használatát a függvényen belül
@@ -64,9 +64,9 @@ def kanyarodas(k_fok, k_legnagyobb_sebesseg=360, k_lassitas=80, k_legkisebb_sebe
         k_jelzo = k_hatralevo_fokok/abs(k_hatralevo_fokok) #a k_hatralevo_fokokat elosztjuk a k_hatralevo_fokok abszolutértékével, ha a k_hatralevo_fokok pozitiv akkor 1, ha negatív akkor -1 lesz a K_jelző értéke(pl 10/10=1 -10/10=-1)
         k_hatralevo_fokok = abs(k_hatralevo_fokok) #a k_hatralevo_fokok abszolut értéke legyen a k_hatralevo_fokok, azért kell hogy pozitiv legyen és a jelző már eltárolta, hogy negativ vagy pozitiv
         if k_hatralevo_fokok <= 0.5: #ha a k_hatralevo_fokok kisebb egyenlő mint 0.5
-            break #akkor álj, vagyis lépjen ki a while-ból       
+            break #akkor álj, vagyis lépjen ki a while-ból      
         if k_hatralevo_fokok < k_lassitas : #ha a k_hatralevo_fokok kisebb, mint a k_lassitas(vagyis a lassítás szakaszban van)
-            k_ratio = k_hatralevo_fokok / k_lassitas #akkor a lassitas ratioja a k_hatralevo_fokok/k_lassitas, ez legyen az e_ratio ez a szám 0-1ig van 
+            k_ratio = k_hatralevo_fokok / k_lassitas #akkor a lassitas ratioja a k_hatralevo_fokok/k_lassitas, ez legyen az e_ratio ez a szám 0-1ig van
             k_mostani_sebesseg = max(k_ratio * k_legnagyobb_sebesseg, k_legkisebb_sebesseg) * k_jelzo #az k_mostani_sebesseg legyen a max(vagyis a nagyobb) az k_legkisebb_sebesseg(hogy ne menjen lassabban) vagy a k_ratio*k_legnagyobb_sebesseg és ez megszorozva az k_jelzo-vel ami 1 vagy -1, hogy pozitiv vagy negativ legyen
         else: #ha nem az előző, vagyis nem lassít
             k_mostani_sebesseg = k_legnagyobb_sebesseg * k_jelzo #akkor a k_mostani_sebesseg legyen egyenlő a k_legnagyobb_sebesseg * k_jelzo(1 vagy -1)
@@ -75,51 +75,77 @@ def kanyarodas(k_fok, k_legnagyobb_sebesseg=360, k_lassitas=80, k_legkisebb_sebe
     bal.hold() #a bal megáll(pont ott marad a pozíciója)
     jobb.hold() #a jobb megáll(pont ott marad a pozíciója)
     wait(100)
-
+ 
 def jobb_feltet(angle, speed = 400): #létrehozunk egy jobb_feltet nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a jobb feltét motorra vonatkozik
     feltet_jobb.run_angle(speed, angle*jobb_attet) #a feltet_jobbot lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a jobb_atettel
-
+ 
 def bal_feltet(angle, speed = 400): #létrehozunk egy bal_feltet nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a bal feltét motorra vonatkozik
     feltet_bal.run_angle(speed, angle*bal_attet) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel
-
+ 
 def jobb_feltet_hatter(angle, speed = 400): #létrehozunk egy jobb_feltet_hatter nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a jobb feltét motorra vonatkozik és ez mozgás közben is működik
     feltet_jobb.run_angle(speed, angle*jobb_attet, wait=False) #a feltet_jobbat lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a jobb_atettel és itt a nem vár hanem lefut hatterben
-
+ 
 def bal_feltet_hatter(angle, speed = 400): #létrehozunk egy bal_feltet_hatter nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a bal feltét motorra vonatkozik és ez mozgás közben
     feltet_bal.run_angle(speed, angle*bal_attet, wait=False) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel és itt a nem vár hanem lefut hatterben
-
+ 
 hub.system.set_stop_button(Button.BLUETOOTH) #a leállító gombot berakjuk a bluetooth gombra
 hub.display.number(1) #kiirja az 1-es számot, mert az elején az 1-es futás van
 voltage = hub.battery.voltage()
 print(voltage)
-
+ 
 def futas_1(): #létrehozunk egy futas_1 nevü függvényt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
     #ez után ird
+    """bal_feltet (-115, speed=100) #felemelei a bal feltétkart
+    jobb_feltet_hatter(65) #felemeli a jobb feltétkart
+    egyenes (635) #előre megy az 1-es feladathoz
+    bal_feltet (79, 100) #leereszti az ecsetre a bal feltétkart
+    egyenes (60) #előre megy ezzel megoldva a hátsó talajlerakódást
+    egyenes (-110) #hátra megy ezzel megoldva az elöl lévő talajlerakódást
+    egyenes (50) #előre megy
+    bal_feltet (-59, 100) #felemeli a bal feltétet az ecsettel együtt
+    egyenes (70) # belemegy a passzívkeretbe
+    kanyarodas (87) #elkanyarodik jobbra
+    egyenes(72) #előre megy, hogy megfelelő pozíciót szerezzen a 2. feladathoz
+    kanyarodas(-128) #rákanyarodik a 2-es feladatra
+    egyenes(330) #rá megy a 2-es feladatra és a passzívkerettel megoldva a 2/3 részét a feladatnak és jobb oldali feltét meg az utolsó fedőtalaj harmadra megy rá
+    jobb_feltet(213, speed=100) #felemeli a jobb oldali feltétet ezzel megoldva az utolsó harmadát a kettes feladatnak
+    egyenes(-277) #hátra megy, ezzel eltávolodva a passzívkeretből és a feladattól
+    kanyarodas(115.5) #rákanyarodik
+    egyenes(-76)
+    jobb_feltet(-265)
+    egyenes(72.72)
+    jobb_feltet(245, speed=70)
+    egyenes(-235)
+    kanyarodas(119)
+    egyenes(900)"""
     bal_feltet (-115, speed=100)
-    jobb_feltet_hatter(31)
+    jobb_feltet_hatter(50)
     egyenes (635)
-    bal_feltet (72, 100)
+    bal_feltet (65, 100)
     egyenes (60)
     egyenes (-110)
     egyenes (50)
-    bal_feltet (-55, 100)
-    egyenes (70)
-    kanyarodas (80)
-    egyenes(130)
-    kanyarodas(-121)
+    bal_feltet (-53, 120)
+    egyenes (65)
+    kanyarodas (88)
+    egyenes(100)
+    kanyarodas(-125.1)
     egyenes(330)
     jobb_feltet(210)
-    egyenes(-235)
+    wait(100)
+    egyenes(-300)
+    kanyarodas(93)
+    egyenes(-89)
     jobb_feltet(-257)
-    egyenes(66.6)
+    egyenes(99.99)
     jobb_feltet(235, speed=70)
-    egyenes(-235)
-    kanyarodas(111)
-    egyenes(999)
-
-
+    egyenes(-245)
+    kanyarodas(133)
+    egyenes(850)
+ 
+ 
 def futas_2(): #létrehozunk egy futas_2 nevü függvényt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
@@ -130,7 +156,7 @@ def futas_2(): #létrehozunk egy futas_2 nevü függvényt
     egyenes(-15)
     jobb_feltet(-230)
     egyenes(-777, e_legnagyobb_sebesseg=999)
-
+ 
 def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
     jobb_attet = 1
@@ -140,7 +166,7 @@ def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     #ez után ird
     bal_feltet_hatter(-400)
     egyenes(120)
-    kanyarodas(56.6)
+    kanyarodas(56.3)
     egyenes(825)
     jobb_feltet(-230, speed=600)
     kanyarodas(-35)
@@ -158,8 +184,8 @@ def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     egyenes(-45)
     bal_feltet(395)
     egyenes(35)
-    kanyarodas(12)
-    egyenes(25)
+    kanyarodas(11.5)
+    egyenes(30)
     egyenes(-25)
     kanyarodas(-11.5)
     egyenes(-115)
@@ -167,23 +193,23 @@ def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     bal_feltet(-355)
     kanyarodas(19)
     egyenes(300)
-    kanyarodas(-69)
+    kanyarodas(-69.2)
     egyenes(125)
-    bal_feltet(355, speed=615)
+    bal_feltet(355, speed=550)
     bal_feltet(-350)
     egyenes(-20)
     kanyarodas(72.69)
-    egyenes(75)
-    jobb_feltet(-210, speed=799)
+    egyenes(55)
+    jobb_feltet(-210, speed=899)
     jobb_feltet(230, speed=799)
     jobb_feltet(-230, speed=799)
     jobb_feltet(230, speed=799)
-    jobb_feltet(-230, speed=799)
+    jobb_feltet(-230, speed=899)
     jobb_feltet(240, speed=799)
     kanyarodas(53)
     egyenes(690, e_legkisebb_sebesseg=400, e_legnagyobb_sebesseg=999)
-    
-
+   
+ 
 def futas_4(): #létrehozunk egy futas_4 nevü függvényt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
@@ -214,7 +240,7 @@ def futas_4(): #létrehozunk egy futas_4 nevü függvényt
 futas = 0 #létrehozzunk egy futas változót aminek 0 az értéke, ami számolja hányadik futás
 futasok = [futas_1, futas_2, futas_3, futas_4] #létrehozunk egy futasok nevű tömböt és megadjuk az elemeit
 max_futas = len(futasok) #a max_futast létre hozzuk és az értéke a futasok elemszáma
-
+ 
 while True: #egy ciklus ami addig fut amig nem lépünk ki
     hub.display.number(futas + 1) #az agy irja ki a futast + 1
     megnyomva = [] #létrehozunk egy tömböt aminek megnyomva a neve és üresre állítjuk
@@ -232,7 +258,7 @@ while True: #egy ciklus ami addig fut amig nem lépünk ki
         pass #menjen tovább
     if rezgett: #ha rezgett már
         continue  #menjen tovább
-
+ 
     if Button.RIGHT in megnyomva: #ha a jobb gomb bent van a megnyomvában
         futas = (futas + 1) % max_futas #a futas egyen egyenlő a futas + 1nak a maradéka a max_futassal
     if Button.LEFT in megnyomva: #ha a bal gomb bent van a megnyomvában
@@ -247,8 +273,92 @@ while True: #egy ciklus ami addig fut amig nem lépünk ki
         except SystemExit: #ha ki akar lépni ezt csináld
             while Button.CENTER in hub.buttons.pressed(): #a középső gomb megvan nyomva addig
                 pass #menjen tovább
-        bal.hold() #bal áljon le
-        jobb.hold() #jobb áljon le
+        bal.stop() #bal áljon le
+        jobb.stop() #jobb áljon le
         feltet_bal.stop() #feltet_bal álljon le
         feltet_jobb.stop() #feltet_jobb álljon le
         hub.system.set_stop_button(Button.BLUETOOTH) # a stop button legyen a bluetooth
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
