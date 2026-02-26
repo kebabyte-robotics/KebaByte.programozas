@@ -111,7 +111,7 @@ def futas_1(): #létrehozunk egy futas_1 nevü függvényt
     kanyarodas(-121)
     egyenes(330)
     jobb_feltet(210)
-    egyenes(-235))
+    egyenes(-235)
     jobb_feltet(-257)
     egyenes(66.6)
     jobb_feltet(235, speed=70)
