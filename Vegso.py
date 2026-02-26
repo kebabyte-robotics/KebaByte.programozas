@@ -138,50 +138,6 @@ def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
     #ez után ird
-    """bal_feltet_hatter(-400)
-    egyenes(120)
-    kanyarodas(56.3)
-    egyenes(825)
-    jobb_feltet(-230, speed=600)
-    kanyarodas(-35)
-    jobb_feltet_hatter(190)
-    egyenes(370)
-    egyenes(-84)
-    jobb_feltet_hatter(-235)
-    kanyarodas(99)
-    egyenes(189)
-    egyenes(-129)
-    jobb_feltet(245)
-    kanyarodas(-46.4)
-    egyenes(235)
-    kanyarodas(17)
-    egyenes(-45)
-    bal_feltet(395)
-    egyenes(35)
-    kanyarodas(14.2)
-    egyenes(19)
-    egyenes(-26)
-    kanyarodas(-13)
-    egyenes(-130)
-    kanyarodas(9)
-    bal_feltet(-325)
-    kanyarodas(19)
-    egyenes(315)
-    kanyarodas(-69)
-    egyenes(125)
-    bal_feltet(355, speed=610)
-    bal_feltet(-350)
-    egyenes(-20)
-    kanyarodas(72.69)
-    egyenes(75)
-    jobb_feltet(-210, speed=899)
-    jobb_feltet(230, speed=899)
-    jobb_feltet(-230, speed=799)
-    jobb_feltet(230, speed=799)
-    jobb_feltet(-230, speed=799)
-    jobb_feltet(240, speed=799)
-    kanyarodas(53)
-    egyenes(690, e_legkisebb_sebesseg=400, e_legnagyobb_sebesseg=999)"""
     bal_feltet_hatter(-400)
     egyenes(120)
     kanyarodas(56.6)
@@ -254,42 +210,9 @@ def futas_4(): #létrehozunk egy futas_4 nevü függvényt
     egyenes(24)
     bal_feltet(214)
     egyenes(-211)
-
-
-
-
-def futas_5(): #létrehozunk egy futas_5 nevü függvény
-    hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
-    wait(200)
-    #ez után ird
-    egyenes(230)
-    kanyarodas(35)
-    egyenes(495)
-    kanyarodas(-79)
-    egyenes(263, e_legnagyobb_sebesseg=999)
-    egyenes(-200)
-    kanyarodas(126)
-    egyenes(-310)
-    egyenes(61)
-    kanyarodas(-45)
-    egyenes(-21)
-    kanyarodas(-56)
-    egyenes(10)
-    kanyarodas(-3)
-    egyenes(-21)
-    bal_feltet(2200, speed=250)
-    egyenes(11)
-    kanyarodas(63)
-    egyenes(131)
-
-    """ egyenes(230)
-    kanyarodas(35)
-    egyenes(205)
-    kanyarodas(-35)
-    egyenes(270) """
  
 futas = 0 #létrehozzunk egy futas változót aminek 0 az értéke, ami számolja hányadik futás
-futasok = [futas_1, futas_2, futas_3, futas_4, futas_5] #létrehozunk egy futasok nevű tömböt és megadjuk az elemeit
+futasok = [futas_1, futas_2, futas_3, futas_4] #létrehozunk egy futasok nevű tömböt és megadjuk az elemeit
 max_futas = len(futasok) #a max_futast létre hozzuk és az értéke a futasok elemszáma
 
 while True: #egy ciklus ami addig fut amig nem lépünk ki
