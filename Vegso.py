@@ -1,4 +1,3 @@
-
 from pybricks.hubs import * #beimportálja az agyat
 from pybricks.pupdevices import * #beimportálja a pupdevicesokat
 from pybricks.parameters import * #beimportálja a paramétereket
@@ -97,66 +96,53 @@ print(voltage)
 def futas_1(): #létrehozunk egy futas_1 nevü függvényt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
-    #ez után ird
-    """bal_feltet (-115, speed=100) #felemelei a bal feltétkart
-    jobb_feltet_hatter(65) #felemeli a jobb feltétkart
-    egyenes (635) #előre megy az 1-es feladathoz
-    bal_feltet (79, 100) #leereszti az ecsetre a bal feltétkart
-    egyenes (60) #előre megy ezzel megoldva a hátsó talajlerakódást
-    egyenes (-110) #hátra megy ezzel megoldva az elöl lévő talajlerakódást
-    egyenes (50) #előre megy
-    bal_feltet (-59, 100) #felemeli a bal feltétet az ecsettel együtt
-    egyenes (70) # belemegy a passzívkeretbe
-    kanyarodas (87) #elkanyarodik jobbra
-    egyenes(72) #előre megy, hogy megfelelő pozíciót szerezzen a 2. feladathoz
-    kanyarodas(-128) #rákanyarodik a 2-es feladatra
-    egyenes(330) #rá megy a 2-es feladatra és a passzívkerettel megoldva a 2/3 részét a feladatnak és jobb oldali feltét meg az utolsó fedőtalaj harmadra megy rá
-    jobb_feltet(213, speed=100) #felemeli a jobb oldali feltétet ezzel megoldva az utolsó harmadát a kettes feladatnak
-    egyenes(-277) #hátra megy, ezzel eltávolodva a passzívkeretből és a feladattól
-    kanyarodas(115.5) #rákanyarodik
-    egyenes(-76)
-    jobb_feltet(-265)
-    egyenes(72.72)
-    jobb_feltet(245, speed=70)
-    egyenes(-235)
-    kanyarodas(119)
-    egyenes(900)"""
-    bal_feltet (-115, speed=100)
-    jobb_feltet_hatter(50)
-    egyenes (635)
-    bal_feltet (65, 100)
-    egyenes (60)
-    egyenes (-110)
-    egyenes (50)
-    bal_feltet (-53, 120)
-    egyenes (65)
-    kanyarodas (88)
-    egyenes(100)
-    kanyarodas(-125.1)
-    egyenes(330)
-    jobb_feltet(210)
+    bal_feltet(-225)
     wait(100)
-    egyenes(-300)
-    kanyarodas(93)
-    egyenes(-89)
-    jobb_feltet(-257)
-    egyenes(99.99)
-    jobb_feltet(235, speed=70)
-    egyenes(-245)
-    kanyarodas(133)
-    egyenes(850)
+    jobb_feltet_hatter(69)
+    egyenes(635)
+    kanyarodas(70)
+    egyenes(135)
+    kanyarodas(-110)
+    egyenes(365)
+    jobb_feltet(155, speed=70)
+    egyenes(-330)  
+    kanyarodas(95)
+    egyenes(-120)
+    jobb_feltet(-215)
+    egyenes(125)
+    kanyarodas(-10)
+    egyenes(20)
+    jobb_feltet(215, speed=100)
+    egyenes(-60)
+    kanyarodas(42)
+    egyenes(-395)
+    egyenes(35)
+    kanyarodas(-90, k_legnagyobb_sebesseg=500, k_legkisebb_sebesseg=100)
+    egyenes(-215)
+    wait(300)
+    bal_feltet(219, speed=1000)
+    wait(100)
+    bal_feltet(-172, speed=100)
+    egyenes(-445)
+    """egyenes(-155)
+    bal_feltet_hatter(225, speed=100)
+    kanyarodas(121)
+    jobb_feltet(-185)
+    egyenes(60, e_legkisebb_sebesseg=20, e_legnagyobb_sebesseg=100)
+    bal_feltet(-75, speed=100)
+    jobb_feltet(215, speed=75)"""
+ 
  
  
 def futas_2(): #létrehozunk egy futas_2 nevü függvényt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
-    #ez után irdjobb_feltet_hatter (-240)
     egyenes(666, e_legnagyobb_sebesseg=800)
     jobb_feltet(255, speed=200)
     bal_feltet(2200, speed=888)
     egyenes(-15)
     jobb_feltet(-230)
-    egyenes(-777, e_legnagyobb_sebesseg=999)
+    egyenes(-750, e_legnagyobb_sebesseg=999)
  
 def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
@@ -165,24 +151,23 @@ def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
     #ez után ird
-    bal_feltet_hatter(-400)
+    bal_feltet_hatter(-400, speed=555)
     egyenes(120)
-    kanyarodas(56.3)
+    kanyarodas(56)
     egyenes(825)
     jobb_feltet(-230, speed=600)
-    kanyarodas(-35)
-    jobb_feltet_hatter(190)
+    kanyarodas(-33.67)
+    jobb_feltet_hatter(210)
     egyenes(370)
-    egyenes(-84)
-    jobb_feltet_hatter(-235)
-    kanyarodas(99)
+    egyenes(-50)
+    jobb_feltet_hatter(-285, speed=300)
+    kanyarodas(108, k_legnagyobb_sebesseg=180)
     egyenes(189)
     egyenes(-129)
-    jobb_feltet(245)
+    jobb_feltet(275)
     kanyarodas(-46.4)
     egyenes(235)
-    kanyarodas(17)
-    egyenes(-45)
+    egyenes(-55)
     bal_feltet(395)
     egyenes(35)
     kanyarodas(11.5)
@@ -223,20 +208,22 @@ def futas_4(): #létrehozunk egy futas_4 nevü függvényt
     kanyarodas(-23, k_legnagyobb_sebesseg=720, k_legkisebb_sebesseg=360)
     egyenes(-30)
     kanyarodas(-11)
-    jobb_feltet(350, speed=999)
+    jobb_feltet(360, speed=999)
     egyenes(200)
-    kanyarodas(6)
-    jobb_feltet(-360, speed=995)
+    kanyarodas(4)
+    jobb_feltet(-330, speed=995)
     wait(100)
     kanyarodas(-25, k_legkisebb_sebesseg=180)
-    egyenes(360)
-    kanyarodas(53.3, k_legkisebb_sebesseg=180)
-    egyenes(172)
-    jobb_feltet(210, speed=400)
-    kanyarodas(18)
+    egyenes(330)
+    kanyarodas(54.3, k_legkisebb_sebesseg=180)
+    egyenes(184)
+    kanyarodas(2)
+    jobb_feltet(210, speed=999)
+    kanyarodas(12)
     egyenes(24)
-    bal_feltet(214)
+    bal_feltet(214, speed=222)
     egyenes(-211)
+ 
  
 futas = 0 #létrehozzunk egy futas változót aminek 0 az értéke, ami számolja hányadik futás
 futasok = [futas_1, futas_2, futas_3, futas_4] #létrehozunk egy futasok nevű tömböt és megadjuk az elemeit
