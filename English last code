@@ -1,252 +1,248 @@
-from pybricks.hubs import * #beimportálja az agyat
-from pybricks.pupdevices import * #beimportálja a pupdevicesokat
-from pybricks.parameters import * #beimportálja a paramétereket
-from pybricks.tools import * #beimportálja a toolsokat
+from pybricks.hubs import * #imports the hub
+from pybricks.pupdevices import * #imports the pupdevices
+from pybricks.parameters import * #imports the parameters
+from pybricks.tools import * #imports the tools
  
-hub = PrimeHub() #az agyat elnevezi hubnak
-bal  = Motor(Port.B) #a motort ami a B portba van elnevezzük balnak és óra járásával megegyező irányba forog
-jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE) #a motort ami az F portba van elnevezzük balnak és óra járásával ellentétes irányba forog
-feltet_bal = Motor(Port.E) #a feltét motort ami az E portba van elnevezzük feltet_balnak és a fogaskerék áttét 12, 12, 20
-feltet_jobb = Motor(Port.A)  #a feltét motort ami az A portba van elnevezzük feltet_jobbnak és a fogaskerék áttét 12, 12, 20
-feltet_bal.control.limits(1000, 6500)
-feltet_jobb.control.limits(1000, 6500)
-bal.control.limits(2000, 5500)
-jobb.control.limits(2000, 5500)
+hub = PrimeHub() #names the hub as hub
+left_motor = Motor(Port.B) #the motor in port B is named left_motor and rotates clockwise
+right_motor = Motor(Port.F, Direction.COUNTERCLOCKWISE) #the motor in port F is named right_motor and rotates counterclockwise
+attachment_left = Motor(Port.E) #the attachment motor in port E is named attachment_left and the gear ratio is 12, 12, 20
+attachment_right = Motor(Port.A)  #the attachment motor in port A is named attachment_right and the gear ratio is 12, 12, 20
+attachment_left.control.limits(1000, 6500)
+attachment_right.control.limits(1000, 6500)
+left_motor.control.limits(2000, 5500)
+right_motor.control.limits(2000, 5500)
 while not hub.imu.ready(): hub.display.char("x")
  
-hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
-irany = 0 #létrehozunk egy irany nevű változót aminek 0 értéket adunk
-jobb_attet = 1 #létrehozunk egy jobb_attet nevű változót aminek 1 értéket adunk, ez fogja számolni a fogaskerék áttéteket
-bal_attet = 1 #létrehozunk egy jobb_attet nevű változót aminek 1 értéket adunk, ez fogja számolni a fogaskerék áttéteket
+hub.imu.reset_heading(0) #sets the gyro value to 0
+heading = 0 #creates a variable named heading with a value of 0
+right_gear_ratio = 1 #creates a variable named right_gear_ratio with a value of 1, this will count the gear ratios
+left_gear_ratio = 1 #creates a variable named left_gear_ratio with a value of 1, this will count the gear ratios
  
-def egyenes(e_tavolsag, e_legkisebb_sebesseg=40, e_gyorsitas=40, e_korekcio=0.01, e_legnagyobb_sebesseg = 700, e_lassitas=80, timeout = None): #létrehozunk egy egyenes nevü függvényt, paramétereket adunk meg amit használni fogunk a függvényben, az e_tavolsagot, e_lassitast és a e_gyorsitast mm-be adjuk meg, az alap értékek csak átlagban működnek
+def drive_straight(distance, min_speed=40, acceleration=40, correction=0.01, max_speed = 700, deceleration=80, timeout = None): #creates a function named drive_straight, defines parameters to be used in the function; distance, deceleration, and acceleration are given in mm, default values only work on average
     if timeout != None:
         timeout_watch = StopWatch()
         timeout_watch.resume()
-    global irany #engedélyezzük a függvénynek az irany változó használatát a függvényen belül
-    bal.reset_angle(0) #a bal szögét 0-ra állítjuk
-    jobb.reset_angle(0) #a jobb szögét 0-ra állítjuk
-    e_tavolsag = e_tavolsag / 0.489 #a mm-ben megadott e_tavolsagot átváltjuk motor fokokra, a kerék kerületét elosztjuk 360nal
-    e_gyorsitas /= 0.489 #a mm-ben megadott e_gyorsitast átváltjuk motor fokokra, a kerék kerületét elosztjuk 360nal
-    e_lassitas /= 0.489 #a mm-ben megadott e_lassitast átváltjuk motor fokokra, a kerék kerületét elosztjuk 360nal
-    while True: #elindítunk egy ciklust ami addig fut ameddig le nem állítjuk
-        if timeout != None and timeout_watch >= timeout: break            
-        e_megtett_tavolsag = (bal.angle()+jobb.angle()) / 2 #a bal és jobb szöget összeadjuk és elosztjuk 2-vel, kijön az átlagos megtetttávolság ami az e_megtett_tavolsag
-        e_hatralevo_tavolsag = e_tavolsag - e_megtett_tavolsag #a tavolsagból kivonjuk az e_megtett_tavolsagot így kijön a e_hatralevo_tavolsag
-        e_jelzo = e_hatralevo_tavolsag/abs(e_hatralevo_tavolsag) #az e_hatralevo_tavolsagot elosztjuk az e_hatralevo_tavolsag abszolutértékével, ha az e_hatralevo_tavolsag pozitiv akkor 1, ha negatív akkor -1 lesz a e_jelző értéke(pl 10/10=1 -10/10=-1)
-        e_megtett_tavolsag = abs(e_megtett_tavolsag) #az e_megtett_tavolsag abszolut értéke legyen az e_megtett_tavolsag, azért kell hogy pozitiv legyen és a jelző már eltárolta, hogy negativ vagy pozitiv
-        e_hatralevo_tavolsag = abs(e_hatralevo_tavolsag) #az e_hatralevo_tavolsag abszolut értéke legyen az e_hatralevo_tavolsag, azért kell hogy pozitiv legyen és a jelző már eltárolta, hogy negativ vagy pozitiv
-        if e_hatralevo_tavolsag < 3: #ha e_hatralevo_tavolsag kevesebb, mint 3 motorfok
-            break #akkor álj, vagyis lépjen ki a while-ból
-        if e_hatralevo_tavolsag < e_lassitas : #ha az e_hatralevo_tavolsag kevesebb, mint az e_lassitas(ha már a lassításba van)
-            e_ratio = e_hatralevo_tavolsag / e_lassitas #akkor a lassitas ratioja az e_hatralevo_tavolsag/e_lassitas, ez legyen az e_ratio ez a szám 0-1ig van
-            e_mostani_sebesseg = max(e_ratio * e_legnagyobb_sebesseg, e_legkisebb_sebesseg) * e_jelzo #az e_mostani_sebesseg legyen a max(vagyis a nagyobb) az e_legkisebb_sebesseg(hogy ne menjen lassabban) vagy a e_ratio*e_legnagyobb_sebesseg és ez megszroozva az e_jelzo-vel ami 1 vagy -1, hogy pozitiv vagy negativ legyen
-        elif e_megtett_tavolsag < e_gyorsitas: #ha nem az előző, ha az e_megtett_tavolsag kisebb, mint az e_gyorsitas(a gyorsítás szakaszba van)
-            e_ratio = e_megtett_tavolsag / e_gyorsitas #az e_ratio legyen egyenlő az e_megtett_tavolsag / e_gyorsittassal ez a szám 0-1 lehet
-            e_mostani_sebesseg = max(e_ratio * e_legnagyobb_sebesseg, e_legkisebb_sebesseg) * e_jelzo ##az e_mostani_sebesseg legyen a max(vagyis a nagyobb) az e_legkisebb_sebesseg(hogy ne menjen lassabban) vagy a e_ratio*e_legnagyobb_sebesseg és ez megszroozva az e_jelzo-vel ami 1 vagy -1, hogy pozitiv vagy negativ legyen
-        else: #ha az előzők közül egyik sem(nem gyorsít sem lassít)
-            e_mostani_sebesseg = e_legnagyobb_sebesseg * e_jelzo #az e_mostani_sebesseg legyen egyenlő az e_legnagyobb_sebesseg * e_jelzo, ami 1 vagy -1 lehet, ami pozitivvá/negatívvá alakítja a számot
-        e_iranyelteres = (irany - hub.imu.heading()) * e_korekcio #az e_iranyelteres legyen egyenlő az irany(merre kellene mennie) - a tényleges mostani fok * az e_korekcio-val(azért kell korekcio hogy finoman korigálja, nem egyben nagyot)
-        e_korekciomertek = e_mostani_sebesseg * e_iranyelteres * e_jelzo #az e_korekcio mertek legyen egyenlő az e_mostani_sebesseg * e_iranyelteres * e_jelzo(1,-1) ez lesz a mérték amennyivel korigálni kell
-        bal.run (e_mostani_sebesseg - e_korekciomertek) #a bal az e_mostani_sebesseg - e_korekciomertek(azért -, mert ha jobbra tér akkor + eltérés akkor abból - lesz, vagyis lassít, ha balra tér el akkor - és -- az + vagyis gyorsít)
-        jobb.run(e_mostani_sebesseg + e_korekciomertek) #a jobb az e_mostani_sebesseg + e_korekciomertek (azért +, mert ha jobbra tér el akkor + eltérés abból + marad, vagyis gyorsít, ha balra tér el akkor - és az - marad vagyis lassít)
-    bal.hold() #a bal megáll(pont ott marad a pozíciója)
-    jobb.hold()#a jobb megáll(pont ott marad a pozíciója)
+    global heading #allows the function to use the heading variable inside the function
+    left_motor.reset_angle(0) #sets the left angle to 0
+    right_motor.reset_angle(0) #sets the right angle to 0
+    distance = distance / 0.489 #converts distance given in mm to motor degrees, dividing wheel circumference by 360
+    acceleration /= 0.489 #converts acceleration given in mm to motor degrees, dividing wheel circumference by 360
+    deceleration /= 0.489 #converts deceleration given in mm to motor degrees, dividing wheel circumference by 360
+    while True: #starts a loop that runs until stopped
+        if timeout != None and timeout_watch.time() >= timeout: break            
+        distance_done = (left_motor.angle()+right_motor.angle()) / 2 #adds left and right angles and divides by 2, resulting in the average distance covered (distance_done)
+        distance_left = distance - distance_done #subtracts distance_done from distance to get distance_left
+        multiplier = distance_left/abs(distance_left) #divides distance_left by its absolute value, if distance_left is positive it's 1, if negative it's -1 (e.g., 10/10=1, -10/10=-1)
+        distance_done = abs(distance_done) #the absolute value of distance_done should be distance_done, needed to be positive as the multiplier already stored the direction
+        distance_left = abs(distance_left) #the absolute value of distance_left should be distance_left, needed to be positive as the multiplier already stored the direction
+        if distance_left < 3: #if distance_left is less than 3 motor degrees
+            break #then stop, i.e., exit the while loop
+        if distance_left < deceleration : #if distance_left is less than deceleration (if already in the deceleration phase)
+            ratio = distance_left / deceleration #then the deceleration ratio is distance_left/deceleration, this is the ratio which is between 0-1
+            current_speed = max(ratio * max_speed, min_speed) * multiplier #current_speed is the maximum of min_speed (so it doesn't go slower) or ratio*max_speed, multiplied by the multiplier (1 or -1) for direction
+        elif distance_done < acceleration: #if not the previous, and distance_done is less than acceleration (it's in the acceleration phase)
+            ratio = distance_done / acceleration #the ratio equals distance_done / acceleration, this number can be 0-1
+            current_speed = max(ratio * max_speed, min_speed) * multiplier ##current_speed is the maximum of min_speed (so it doesn't go slower) or ratio*max_speed, multiplied by the multiplier (1 or -1) for direction
+        else: #if none of the above (neither accelerating nor decelerating)
+            current_speed = max_speed * multiplier #current_speed equals max_speed * multiplier, which can be 1 or -1, turning the number positive/negative
+        heading_error = (heading - hub.imu.heading()) * correction #heading_error equals heading (where it should go) minus the actual current degree multiplied by correction (needed to correct smoothly, not in one big jump)
+        correction_amount = current_speed * heading_error * multiplier #correction_amount equals current_speed * heading_error * multiplier (1,-1), this will be the amount to correct by
+        left_motor.run (current_speed - correction_amount) #left runs at current_speed - correction_amount (minus because if it veers right, positive error, it subtracts, i.e., slows down; if left, negative error, -- is +, i.e., speeds up)
+        right_motor.run(current_speed + correction_amount) #right runs at current_speed + correction_amount (plus because if it veers right, positive error, it stays +, i.e., speeds up; if left, negative error, it stays -, i.e., slows down)
+    left_motor.hold() #left stops (holds its position right there)
+    right_motor.hold()#right stops (holds its position right there)
  
-def kanyarodas(k_fok, k_legnagyobb_sebesseg=360, k_lassitas=80, k_legkisebb_sebesseg=50, timeout = None): #létrehozunk egy kanyarodas nevü függvényt, paramétereket adunk meg amit használni fogunk a függvényben, a k_fok-ot(fokban), k_legnagyobb_sebesseg, k_lassitas(fok-ban), k_legkisebb_sebesseg, az alapból beírt paramétrek csak átlagban működnek
+def turn(target_angle, max_speed=360, deceleration=80, min_speed=50, timeout = None): #creates a function named turn, defines parameters to be used; target_angle (in degrees), max_speed, deceleration (in degrees), min_speed, default parameters only work on average
     if timeout != None:
         timeout_watch = StopWatch()
         timeout_watch.resume()
-    k_alap_fok = hub.imu.heading() #a k_alap_fok értéke legyen egyenlő a gyro értékével, azért kell,h ogy tudjon az előző tévedések alapján korigálni
-    global irany #engedélyezzük a függvénynek az irany változó használatát a függvényen belül
-    k_cel_fok = irany+k_fok #a k_cel_fok = az irány(amerre kellene menni)+k_fok (az irány azért kell hogy az előző tévedést kijavítja)
-    irany = k_cel_fok #az irany legyen egyenlő a k_cel_fok
-    k_cel_fok -= k_alap_fok #a k_cel_fok-ból vonjuk ki a k_alap_fokot vagyi a tévedést
-    while True: #addig fut a ciklus amíg ki nem lépünk
-        if timeout != None and timeout_watch >= timeout: break
-        k_megtett_fokok = hub.imu.heading() - k_alap_fok #a k_megtett_fokok legyen egyenlő a mostani gyro - a k_alap_fok
-        k_hatralevo_fokok = k_cel_fok - k_megtett_fokok #a k_hatralevo_fokok legyen egyenlő  a k_cel_fok - k_megtett_fokok
-        k_jelzo = k_hatralevo_fokok/abs(k_hatralevo_fokok) #a k_hatralevo_fokokat elosztjuk a k_hatralevo_fokok abszolutértékével, ha a k_hatralevo_fokok pozitiv akkor 1, ha negatív akkor -1 lesz a K_jelző értéke(pl 10/10=1 -10/10=-1)
-        k_hatralevo_fokok = abs(k_hatralevo_fokok) #a k_hatralevo_fokok abszolut értéke legyen a k_hatralevo_fokok, azért kell hogy pozitiv legyen és a jelző már eltárolta, hogy negativ vagy pozitiv
-        if k_hatralevo_fokok <= 0.5: #ha a k_hatralevo_fokok kisebb egyenlő mint 0.5
-            break #akkor álj, vagyis lépjen ki a while-ból      
-        if k_hatralevo_fokok < k_lassitas : #ha a k_hatralevo_fokok kisebb, mint a k_lassitas(vagyis a lassítás szakaszban van)
-            k_ratio = k_hatralevo_fokok / k_lassitas #akkor a lassitas ratioja a k_hatralevo_fokok/k_lassitas, ez legyen az e_ratio ez a szám 0-1ig van
-            k_mostani_sebesseg = max(k_ratio * k_legnagyobb_sebesseg, k_legkisebb_sebesseg) * k_jelzo #az k_mostani_sebesseg legyen a max(vagyis a nagyobb) az k_legkisebb_sebesseg(hogy ne menjen lassabban) vagy a k_ratio*k_legnagyobb_sebesseg és ez megszorozva az k_jelzo-vel ami 1 vagy -1, hogy pozitiv vagy negativ legyen
-        else: #ha nem az előző, vagyis nem lassít
-            k_mostani_sebesseg = k_legnagyobb_sebesseg * k_jelzo #akkor a k_mostani_sebesseg legyen egyenlő a k_legnagyobb_sebesseg * k_jelzo(1 vagy -1)
-        bal.run(-k_mostani_sebesseg) #a bal a -k_mostani_sebesseg (azért -, mert ha jobbra forog akkor + eltérés akkor abból - lesz, vagyis hatra megy, ha balra tér el akkor - és -- az + vagyis elore megy)
-        jobb.run(k_mostani_sebesseg) #a jobb a k_mostani_sebesseg (azért +, mert ha jobbra forog akkor + eltérés abból + marad, vagyis elore megy, ha balra tér el akkor - és az - marad vagyis hatra megy)
-    bal.hold() #a bal megáll(pont ott marad a pozíciója)
-    jobb.hold() #a jobb megáll(pont ott marad a pozíciója)
+    base_angle = hub.imu.heading() #base_angle equals the gyro value, needed to correct based on previous errors
+    global heading #allows the function to use the heading variable inside the function
+    target_heading = heading + target_angle #target_heading = heading (where it should have been) + target_angle (heading is used to fix previous errors)
+    heading = target_heading #heading equals target_heading
+    target_heading -= base_angle #subtract base_angle (the error) from target_heading
+    while True: #loop runs until exit
+        if timeout != None and timeout_watch.time() >= timeout: break
+        angle_done = hub.imu.heading() - base_angle #angle_done equals current gyro - base_angle
+        angle_left = target_heading - angle_done #angle_left equals target_heading - angle_done
+        multiplier = angle_left/abs(angle_left) #divides angle_left by its absolute value, if angle_left is positive it's 1, if negative it's -1 (e.g., 10/10=1, -10/10=-1)
+        angle_left = abs(angle_left) #the absolute value of angle_left should be angle_left, needed to be positive as the multiplier already stored direction
+        if angle_left <= 0.5: #if angle_left is less than or equal to 0.5
+            break #then stop, i.e., exit the while loop      
+        if angle_left < deceleration : #if angle_left is less than deceleration (i.e., in the deceleration phase)
+            ratio = angle_left / deceleration #then the deceleration ratio is angle_left/deceleration, this ratio is between 0-1
+            current_speed = max(ratio * max_speed, min_speed) * multiplier #current_speed is the maximum of min_speed (so it doesn't go slower) or ratio*max_speed, multiplied by the multiplier (1 or -1)
+        else: #if not the previous, i.e., not decelerating
+            current_speed = max_speed * multiplier #then current_speed equals max_speed * multiplier (1 or -1)
+        left_motor.run(-current_speed) #left runs at -current_speed (minus because if turning right, positive error becomes minus, goes backward; if left, negative error, -- is +, goes forward)
+        right_motor.run(current_speed) #right runs at current_speed (plus because if turning right, positive stays positive, goes forward; if left, negative stays negative, goes backward)
+    left_motor.hold() #left stops (holds its position)
+    right_motor.hold() #right stops (holds its position)
     wait(100)
  
-def jobb_feltet(angle, speed = 400, timeout=None): #létrehozunk egy jobb_feltet nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a jobb feltét motorra vonatkozik
+def attachment_right_move(angle, speed = 400, timeout=None): #creates a function named attachment_right_move, with angle and speed as parameters, referring to the right attachment motor
     if timeout != None:
         timeout_watch = StopWatch()
         timeout_watch.resume()
-        feltet_jobb.run_angle(speed, angle*bal_attet, wait=False) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel
-        while abs(feltet_jobb.angle()-(angle*jobb_attet)) > 1:
+        attachment_right.run_angle(speed, angle * left_gear_ratio, wait=False) #runs attachment_right in degrees, speed and angle given as parameters multiplied by left_gear_ratio
+        while abs(attachment_right.angle()-(angle * right_gear_ratio)) > 1:
             if timeout_watch.time() >= timeout: break
     else:
-        feltet_jobb.run_angle(speed, angle*bal_attet) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel
+        attachment_right.run_angle(speed, angle * left_gear_ratio) #runs attachment_right in degrees, speed and angle given as parameters multiplied by left_gear_ratio
 
- 
-def bal_feltet(angle, speed = 400, timeout = None): #létrehozunk egy bal_feltet nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a bal feltét motorra vonatkozik
+def attachment_left_move(angle, speed = 400, timeout = None): #creates a function named attachment_left_move, with angle and speed as parameters, referring to the left attachment motor
     if timeout != None:
         timeout_watch = StopWatch()
         timeout_watch.resume()
-        feltet_bal.run_angle(speed, angle*bal_attet, wait=False) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel
-        while abs(feltet_bal.angle()-(angle*bal_attet)) > 1:
+        attachment_left.run_angle(speed, angle * left_gear_ratio, wait=False) #runs attachment_left in degrees, speed and angle given as parameters multiplied by left_gear_ratio
+        while abs(attachment_left.angle()-(angle * left_gear_ratio)) > 1:
             if timeout != None and timeout_watch.time() >= timeout: break
     else:
-        feltet_bal.run_angle(speed, angle*bal_attet) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel
+        attachment_left.run_angle(speed, angle * left_gear_ratio) #runs attachment_left in degrees, speed and angle given as parameters multiplied by left_gear_ratio
         
-   
+def attachment_right_background(angle, speed = 400): #creates a function named attachment_right_background, with angle and speed as parameters, works during movement
+    attachment_right.run_angle(speed, angle * right_gear_ratio, wait=False) #runs attachment_right in degrees, speed and angle given multiplied by right_gear_ratio, doesn't wait (runs in background)
  
-def jobb_feltet_hatter(angle, speed = 400): #létrehozunk egy jobb_feltet_hatter nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a jobb feltét motorra vonatkozik és ez mozgás közben is működik
-    feltet_jobb.run_angle(speed, angle*jobb_attet, wait=False) #a feltet_jobbat lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a jobb_atettel és itt a nem vár hanem lefut hatterben
+def attachment_left_background(angle, speed = 400): #creates a function named attachment_left_background, with angle and speed as parameters, works during movement
+    attachment_left.run_angle(speed, angle * left_gear_ratio, wait=False) #runs attachment_left in degrees, speed and angle given multiplied by left_gear_ratio, doesn't wait (runs in background)
  
-def bal_feltet_hatter(angle, speed = 400): #létrehozunk egy bal_feltet_hatter nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a bal feltét motorra vonatkozik és ez mozgás közben
-    feltet_bal.run_angle(speed, angle*bal_attet, wait=False) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel és itt a nem vár hanem lefut hatterben
- 
-hub.system.set_stop_button(Button.BLUETOOTH) #a leállító gombot berakjuk a bluetooth gombra
-hub.display.number(1) #kiirja az 1-es számot, mert az elején az 1-es futás van
+hub.system.set_stop_button(Button.BLUETOOTH) #sets the stop button to the bluetooth button
+hub.display.number(1) #displays number 1, as run 1 starts
 voltage = hub.battery.voltage()
 print(voltage)
  
-def futas_1(): #létrehozunk egy futas_1 nevü függvényt
-    hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
+def run_1(): #creates a function named run_1
+    hub.imu.reset_heading(0) #sets gyro value to 0
     wait(200)
-    bal_feltet(-225)
+    attachment_left_move(-225)
     wait(100)
-    jobb_feltet_hatter(69)
-    egyenes(635)
-    kanyarodas(70)
-    egyenes(135)
-    kanyarodas(-110)
-    egyenes(365)
-    jobb_feltet(155, speed=70)
-    egyenes(-330)  
-    kanyarodas(95)
-    egyenes(-120)
-    jobb_feltet(-215)
-    egyenes(125)
-    kanyarodas(-10)
-    egyenes(20)
-    jobb_feltet(215, speed=100)
-    egyenes(-60)
-    kanyarodas(42)
-    egyenes(-395)
-    egyenes(35)
-    kanyarodas(-90, k_legnagyobb_sebesseg=500, k_legkisebb_sebesseg=100)
-    egyenes(-215)
+    attachment_right_background(69)
+    drive_straight(635)
+    turn(70)
+    drive_straight(135)
+    turn(-110)
+    drive_straight(365)
+    attachment_right_move(155, speed=70)
+    drive_straight(-330)  
+    turn(95)
+    drive_straight(-120)
+    attachment_right_move(-215)
+    drive_straight(125)
+    turn(-10)
+    drive_straight(20)
+    attachment_right_move(215, speed=100)
+    drive_straight(-60)
+    turn(42)
+    drive_straight(-395)
+    drive_straight(35)
+    turn(-90, max_speed=500, min_speed=100)
+    drive_straight(-215)
     wait(300)
-    bal_feltet(219, speed=1000)
+    attachment_left_move(219, speed=1000)
     wait(100)
-    bal_feltet(-172, speed=100)
-    egyenes(-445)
+    attachment_left_move(-172, speed=100)
+    drive_straight(-445)
  
-def futas_2(): #létrehozunk egy futas_2 nevü függvényt
-    hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
+def run_2(): #creates a function named run_2
+    hub.imu.reset_heading(0) #sets gyro value to 0
     wait(200)
-    egyenes(666, e_legnagyobb_sebesseg=800)
-    jobb_feltet(255, speed=200)
-    bal_feltet(2200, speed=888)
-    egyenes(-15)
-    jobb_feltet(-230)
-    egyenes(-750, e_legnagyobb_sebesseg=999)
+    drive_straight(666, max_speed=800)
+    attachment_right_move(255, speed=200)
+    attachment_left_move(2200, speed=888)
+    drive_straight(-15)
+    attachment_right_move(-230)
+    drive_straight(-750, max_speed=999)
  
-def futas_3(): #létrehozunk egy futas_3 nevü függvényt
-    global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
-    jobb_attet = 1
-    bal_attet = 1
-    hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
+def run_3(): #creates a function named run_3
+    global right_gear_ratio, left_gear_ratio #allows the function to use right_gear_ratio and left_gear_ratio inside the function
+    right_gear_ratio = 1
+    left_gear_ratio = 1
+    hub.imu.reset_heading(0) #sets gyro value to 0
     wait(200)
-    bal_feltet_hatter(-400)
-    egyenes(115)
-    kanyarodas(56)
-    egyenes(825)
-    jobb_feltet(-210, speed=400)
-    kanyarodas(-34.67)
-    jobb_feltet_hatter(210)
-    egyenes(370)
-    egyenes(-30)
-    kanyarodas(110, k_legnagyobb_sebesseg=180)
-    jobb_feltet(-240, speed=900)
-    egyenes(200)
-    egyenes(-135)
-    jobb_feltet(275)
-    kanyarodas(-46.4)
-    egyenes(170)
-    bal_feltet(395)
-    kanyarodas(10.9)
-    egyenes(55)
-    egyenes(-45)
-    kanyarodas(-13.3)
-    egyenes(-120)
-    kanyarodas(9)
-    bal_feltet(-355)
-    kanyarodas(16)
-    egyenes(370)
-    jobb_feltet(-210, speed=899)
-    jobb_feltet(210, speed=799)
-    jobb_feltet(-210, speed=799)
-    jobb_feltet(210, speed=799)
-    jobb_feltet(-210, speed=899)
-    jobb_feltet(210, speed=799)
-    kanyarodas(-69)
-    egyenes(90)
-    bal_feltet(355, speed=550)
-    bal_feltet(-350)
-    egyenes(-60)
-    kanyarodas(45)
-    egyenes(390)
-    bal_feltet(355, speed=999)
+    attachment_left_background(-400)
+    drive_straight(115)
+    turn(56)
+    drive_straight(825)
+    attachment_right_move(-210, speed=400)
+    turn(-34.67)
+    attachment_right_background(210)
+    drive_straight(370)
+    drive_straight(-30)
+    turn(110, max_speed=180)
+    attachment_right_move(-240, speed=900)
+    drive_straight(200)
+    drive_straight(-135)
+    attachment_right_move(275)
+    turn(-46.4)
+    drive_straight(170)
+    attachment_left_move(395)
+    turn(10.9)
+    drive_straight(55)
+    drive_straight(-45)
+    turn(-13.3)
+    drive_straight(-120)
+    turn(9)
+    attachment_left_move(-355)
+    turn(16)
+    drive_straight(370)
+    attachment_right_move(-210, speed=899)
+    attachment_right_move(210, speed=799)
+    attachment_right_move(-210, speed=799)
+    attachment_right_move(210, speed=799)
+    attachment_right_move(-210, speed=899)
+    attachment_right_move(210, speed=799)
+    turn(-69)
+    drive_straight(90)
+    attachment_left_move(355, speed=550)
+    attachment_left_move(-350)
+    drive_straight(-60)
+    turn(45)
+    drive_straight(390)
+    attachment_left_move(355, speed=999)
  
-def futas_4(): #létrehozunk egy futas_4 nevü függvényt
-    hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
+def run_4(): #creates a function named run_4
+    hub.imu.reset_heading(0) #sets gyro value to 0
     wait(200)
 
-futas = 0 #létrehozzunk egy futas változót aminek 0 az értéke, ami számolja hányadik futás
-futasok = [futas_1, futas_2, futas_3, futas_4] #létrehozunk egy futasok nevű tömböt és megadjuk az elemeit
-max_futas = len(futasok) #a max_futast létre hozzuk és az értéke a futasok elemszáma
+current_run = 0 #creates a variable named current_run with a value of 0, which counts the run number
+runs = [run_1, run_2, run_3, run_4] #creates an array named runs and specifies its elements
+max_runs = len(runs) #creates max_runs and its value is the number of elements in runs
  
-while True: #egy ciklus ami addig fut amig nem lépünk ki
-    hub.display.number(futas + 1) #az agy irja ki a futast + 1
-    megnyomva = [] #létrehozunk egy tömböt aminek megnyomva a neve és üresre állítjuk
-    while not any(megnyomva): #amig nincs semmi a megnyomva tömbben, addig fusson
-        megnyomva = hub.buttons.pressed() #a megnyomva tömbön legyen az agyon megnyomott gombok  
-    lenyomott = StopWatch() #létrehozzuk a lenyomott változót, amin elindul a stopper
-    rezgett = False #létrehozzunk egy rezgett nevű változót amit beállítunk Hamisra
-    while hub.buttons.pressed(): #egy ciklus ami addig fut ameddig egy gomb le van nyomva
-        if lenyomott.time() > 500: #ha a lenyomott idő több mint fél másodperc
-            rezgett = True #a rezgett legyen Igaz
-            bal_feltet_hatter(45, speed=900) #bal_feltet_hattert elindítjuk 45 fokra, 600 sebességgel
-            jobb_feltet(45, speed=900) #jobb_feltet elindítjuk 45 fokra, 600 sebességgel
-            bal_feltet_hatter(-45, speed=900) #bal_feltet_hattert elindítjuk 45 fokra, 600 sebességgel
-            jobb_feltet(-45, speed=900) #jobb_feltet elindítjuk 45 fokra, 600 sebességgel
-        pass #menjen tovább
-    if rezgett: #ha rezgett már
-        continue  #menjen tovább
+while True: #a loop that runs until we exit
+    hub.display.number(current_run + 1) #hub displays current_run + 1
+    pressed = [] #creates an array named pressed and sets it to empty
+    while not any(pressed): #as long as there's nothing in the pressed array, run
+        pressed = hub.buttons.pressed() #the pressed array contains the buttons pressed on the hub  
+    hold_timer = StopWatch() #creates the hold_timer variable, starting the stopwatch
+    vibrated = False #creates a variable named vibrated and sets it to False
+    while hub.buttons.pressed(): #a loop that runs as long as a button is pressed
+        if hold_timer.time() > 500: #if the pressed time is more than half a second
+            vibrated = True #vibrated becomes True
+            attachment_left_background(45, speed=900) #starts attachment_left_background to 45 degrees, at speed 600 (note: code says 900)
+            attachment_right_move(45, speed=900) #starts attachment_right_move to 45 degrees, at speed 600 (note: code says 900)
+            attachment_left_background(-45, speed=900) #starts attachment_left_background to 45 degrees, at speed 600 (note: code says 900)
+            attachment_right_move(-45, speed=900) #starts attachment_right_move to 45 degrees, at speed 600 (note: code says 900)
+        pass #continue
+    if vibrated: #if it already vibrated
+        continue  #continue
  
-    if Button.RIGHT in megnyomva: #ha a jobb gomb bent van a megnyomvában
-        futas = (futas + 1) % max_futas #a futas egyen egyenlő a futas + 1nak a maradéka a max_futassal
-    if Button.LEFT in megnyomva: #ha a bal gomb bent van a megnyomvában
-        futas = (futas - 1) % max_futas #a futas egyen egyenlő a futas + 1nak a maradéka a max_futassal
-    if Button.CENTER in megnyomva: #ha a középső gomb bent van a megnyomvában
-        irany = 0
-        hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
-        try: #futassd le a kódot, ha kilép menj az exceptre
-            hub.system.set_stop_button(Button.CENTER) # a stop button legyen a középső gomb
-            futasok[futas]() #futassa le a futasok futas elemét
-            futas = (futas + 1) % max_futas #a futas egyen egyenlő a futas + 1nak a maradéka a max_futassal
-        except SystemExit: #ha ki akar lépni ezt csináld
-            while Button.CENTER in hub.buttons.pressed(): #a középső gomb megvan nyomva addig
-                pass #menjen tovább
-        bal.stop() #bal áljon le
-        jobb.stop() #jobb áljon le
-        feltet_bal.stop() #feltet_bal álljon le
-        feltet_jobb.stop() #feltet_jobb álljon le
-        hub.system.set_stop_button(Button.BLUETOOTH) # a stop button legyen a bluetooth
- 
+    if Button.RIGHT in pressed: #if the right button is in pressed
+        current_run = (current_run + 1) % max_runs #current_run equals current_run + 1 remainder of max_runs
+    if Button.LEFT in pressed: #if the left button is in pressed
+        current_run = (current_run - 1) % max_runs #current_run equals current_run - 1 remainder of max_runs
+    if Button.CENTER in pressed: #if the center button is in pressed
+        heading = 0
+        hub.imu.reset_heading(0) #sets gyro value to 0
+        try: #run the code, if it exits go to except
+            hub.system.set_stop_button(Button.CENTER) #the stop button should be the center button
+            runs[current_run]() #runs the current run element of runs
+            current_run = (current_run + 1) % max_runs #current_run equals current_run + 1 remainder of max_runs
+        except SystemExit: #if trying to exit, do this
+            while Button.CENTER in hub.buttons.pressed(): #as long as the center button is pressed
+                pass #continue
+        left_motor.stop() #left stops
+        right_motor.stop() #right stops
+        attachment_left.stop() #attachment_left stops
+        attachment_right.stop() #attachment_right stops
+        hub.system.set_stop_button(Button.BLUETOOTH) #the stop button should be bluetooth
