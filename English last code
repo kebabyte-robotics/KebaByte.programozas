@@ -12,7 +12,7 @@ attachment_left.control.limits(1000, 6500) # Set speed and acceleration limits f
 attachment_right.control.limits(1000, 6500) # Set speed and acceleration limits for the right attachment motor
 left_motor.control.limits(2000, 5500) # Set speed and acceleration limits for the left drive motor
 right_motor.control.limits(2000, 5500) # Set speed and acceleration limits for the right drive motor
-while not hub.imu.ready(): hub.display.char("x") # Wait until the IMU is ready and display an x
+while not hub.imu.ready(): hub.display.char("x") # Wait until the gyro is ready and display an x
  
 hub.imu.reset_heading(0) # Sets the gyro value to 0
 heading = 0 # Creates a variable named heading with a value of 0
