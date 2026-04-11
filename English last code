@@ -121,9 +121,6 @@ def run_2(): # Creates a function named run_2
     wait(200) # Wait for 200 milliseconds
  
 def run_3(): # Creates a function named run_3
-    global right_gear_ratio, left_gear_ratio # Allows the function to use gear ratio variables
-    right_gear_ratio = 1 # Set right gear ratio to 1
-    left_gear_ratio = 1 # Set left gear ratio to 1
     hub.imu.reset_heading(0) # Sets gyro value to 0
     wait(200) # Wait for 200 milliseconds
     
