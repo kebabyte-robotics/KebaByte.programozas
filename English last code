@@ -115,44 +115,10 @@ print(voltage) # Prints the battery voltage to the console
 def run_1(): # Creates a function named run_1
     hub.imu.reset_heading(0) # Sets gyro value to 0
     wait(200) # Wait for 200 milliseconds
-    attachment_left_move(-225) # Execute left attachment move
-    wait(100) # Wait for 100 milliseconds
-    attachment_right_background(69) # Start right attachment move in background
-    drive_straight(635) # Drive straight for 635mm
-    turn(70) # Turn 70 degrees
-    drive_straight(135) # Drive straight for 135mm
-    turn(-110) # Turn -110 degrees
-    drive_straight(365) # Drive straight for 365mm
-    attachment_right_move(155, speed=70) # Move right attachment slowly
-    drive_straight(-330) # Drive straight backward for 330mm
-    turn(95) # Turn 95 degrees
-    drive_straight(-120) # Drive straight backward for 120mm
-    attachment_right_move(-215) # Move right attachment
-    drive_straight(125) # Drive straight for 125mm
-    turn(-10) # Turn -10 degrees
-    drive_straight(20) # Drive straight for 20mm
-    attachment_right_move(215, speed=100) # Move right attachment
-    drive_straight(-60) # Drive straight backward for 60mm
-    turn(42) # Turn 42 degrees
-    drive_straight(-395) # Drive straight backward for 395mm
-    drive_straight(35) # Drive straight for 35mm
-    turn(-90, max_speed=500, min_speed=100) # Turn -90 degrees with specific speeds
-    drive_straight(-215) # Drive straight backward for 215mm
-    wait(300) # Wait for 300 milliseconds
-    attachment_left_move(219, speed=1000) # Move left attachment quickly
-    wait(100) # Wait for 100 milliseconds
-    attachment_left_move(-172, speed=100) # Move left attachment slowly
-    drive_straight(-445) # Drive straight backward for 445mm
  
 def run_2(): # Creates a function named run_2
     hub.imu.reset_heading(0) # Sets gyro value to 0
     wait(200) # Wait for 200 milliseconds
-    drive_straight(666, max_speed=800) # Drive straight for 666mm at high speed
-    attachment_right_move(255, speed=200) # Move right attachment
-    attachment_left_move(2200, speed=888) # Move left attachment a long distance
-    drive_straight(-15) # Drive straight backward for 15mm
-    attachment_right_move(-230) # Move right attachment back
-    drive_straight(-750, max_speed=999) # Drive straight backward at max speed
  
 def run_3(): # Creates a function named run_3
     global right_gear_ratio, left_gear_ratio # Allows the function to use gear ratio variables
@@ -160,47 +126,7 @@ def run_3(): # Creates a function named run_3
     left_gear_ratio = 1 # Set left gear ratio to 1
     hub.imu.reset_heading(0) # Sets gyro value to 0
     wait(200) # Wait for 200 milliseconds
-    attachment_left_background(-400) # Move left attachment in background
-    drive_straight(115) # Drive straight for 115mm
-    turn(56) # Turn 56 degrees
-    drive_straight(825) # Drive straight for 825mm
-    attachment_right_move(-210, speed=400) # Move right attachment
-    turn(-34.67) # Turn -34.67 degrees
-    attachment_right_background(210) # Move right attachment in background
-    drive_straight(370) # Drive straight for 370mm
-    drive_straight(-30) # Drive straight backward for 30mm
-    turn(110, max_speed=180) # Turn 110 degrees slowly
-    attachment_right_move(-240, speed=900) # Move right attachment quickly
-    drive_straight(200) # Drive straight for 200mm
-    drive_straight(-135) # Drive straight backward for 135mm
-    attachment_right_move(275) # Move right attachment
-    turn(-46.4) # Turn -46.4 degrees
-    drive_straight(170) # Drive straight for 170mm
-    attachment_left_move(395) # Move left attachment
-    turn(10.9) # Turn 10.9 degrees
-    drive_straight(55) # Drive straight for 55mm
-    drive_straight(-45) # Drive straight backward for 45mm
-    turn(-13.3) # Turn -13.3 degrees
-    drive_straight(-120) # Drive straight backward for 120mm
-    turn(9) # Turn 9 degrees
-    attachment_left_move(-355) # Move left attachment
-    turn(16) # Turn 16 degrees
-    drive_straight(370) # Drive straight for 370mm
-    attachment_right_move(-210, speed=899) # Move right attachment quickly
-    attachment_right_move(210, speed=799) # Move right attachment back
-    attachment_right_move(-210, speed=799) # Move right attachment again
-    attachment_right_move(210, speed=799) # Move right attachment back
-    attachment_right_move(-210, speed=899) # Move right attachment again
-    attachment_right_move(210, speed=799) # Move right attachment back
-    turn(-69) # Turn -69 degrees
-    drive_straight(90) # Drive straight for 90mm
-    attachment_left_move(355, speed=550) # Move left attachment
-    attachment_left_move(-350) # Move left attachment back
-    drive_straight(-60) # Drive straight backward for 60mm
-    turn(45) # Turn 45 degrees
-    drive_straight(390) # Drive straight for 390mm
-    attachment_left_move(355, speed=999) # Move left attachment at max speed
- 
+    
 def run_4(): # Creates a function named run_4
     hub.imu.reset_heading(0) # Sets gyro value to 0
     wait(200) # Wait for 200 milliseconds
