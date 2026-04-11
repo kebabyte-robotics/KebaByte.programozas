@@ -1,248 +1,248 @@
-from pybricks.hubs import * #imports the hub
-from pybricks.pupdevices import * #imports the pupdevices
-from pybricks.parameters import * #imports the parameters
-from pybricks.tools import * #imports the tools
+from pybricks.hubs import * # Import the hub library
+from pybricks.pupdevices import * # Import the peripheral devices library
+from pybricks.parameters import * # Import the parameter constants
+from pybricks.tools import * # Import the general tools library
  
-hub = PrimeHub() #names the hub as hub
-left_motor = Motor(Port.B) #the motor in port B is named left_motor and rotates clockwise
-right_motor = Motor(Port.F, Direction.COUNTERCLOCKWISE) #the motor in port F is named right_motor and rotates counterclockwise
-attachment_left = Motor(Port.E) #the attachment motor in port E is named attachment_left and the gear ratio is 12, 12, 20
-attachment_right = Motor(Port.A)  #the attachment motor in port A is named attachment_right and the gear ratio is 12, 12, 20
-attachment_left.control.limits(1000, 6500)
-attachment_right.control.limits(1000, 6500)
-left_motor.control.limits(2000, 5500)
-right_motor.control.limits(2000, 5500)
-while not hub.imu.ready(): hub.display.char("x")
+hub = PrimeHub() # Names the hub as hub
+left_motor = Motor(Port.B) # The motor in port B is named left_motor and rotates clockwise
+right_motor = Motor(Port.F, Direction.COUNTERCLOCKWISE) # The motor in port F is named right_motor and rotates counterclockwise
+attachment_left = Motor(Port.E) # The attachment motor in port E is named attachment_left and the gear ratio is 12, 12, 20
+attachment_right = Motor(Port.A)  # The attachment motor in port A is named attachment_right and the gear ratio is 12, 12, 20
+attachment_left.control.limits(1000, 6500) # Set speed and acceleration limits for the left attachment motor
+attachment_right.control.limits(1000, 6500) # Set speed and acceleration limits for the right attachment motor
+left_motor.control.limits(2000, 5500) # Set speed and acceleration limits for the left drive motor
+right_motor.control.limits(2000, 5500) # Set speed and acceleration limits for the right drive motor
+while not hub.imu.ready(): hub.display.char("x") # Wait until the IMU is ready and display an x
  
-hub.imu.reset_heading(0) #sets the gyro value to 0
-heading = 0 #creates a variable named heading with a value of 0
-right_gear_ratio = 1 #creates a variable named right_gear_ratio with a value of 1, this will count the gear ratios
-left_gear_ratio = 1 #creates a variable named left_gear_ratio with a value of 1, this will count the gear ratios
+hub.imu.reset_heading(0) # Sets the gyro value to 0
+heading = 0 # Creates a variable named heading with a value of 0
+right_gear_ratio = 1 # Creates a variable named right_gear_ratio with a value of 1, this will count the gear ratios
+left_gear_ratio = 1 # Creates a variable named left_gear_ratio with a value of 1, this will count the gear ratios
  
-def drive_straight(distance, min_speed=40, acceleration=40, correction=0.01, max_speed = 700, deceleration=80, timeout = None): #creates a function named drive_straight, defines parameters to be used in the function; distance, deceleration, and acceleration are given in mm, default values only work on average
-    if timeout != None:
-        timeout_watch = StopWatch()
-        timeout_watch.resume()
-    global heading #allows the function to use the heading variable inside the function
-    left_motor.reset_angle(0) #sets the left angle to 0
-    right_motor.reset_angle(0) #sets the right angle to 0
-    distance = distance / 0.489 #converts distance given in mm to motor degrees, dividing wheel circumference by 360
-    acceleration /= 0.489 #converts acceleration given in mm to motor degrees, dividing wheel circumference by 360
-    deceleration /= 0.489 #converts deceleration given in mm to motor degrees, dividing wheel circumference by 360
-    while True: #starts a loop that runs until stopped
-        if timeout != None and timeout_watch.time() >= timeout: break            
-        distance_done = (left_motor.angle()+right_motor.angle()) / 2 #adds left and right angles and divides by 2, resulting in the average distance covered (distance_done)
-        distance_left = distance - distance_done #subtracts distance_done from distance to get distance_left
-        multiplier = distance_left/abs(distance_left) #divides distance_left by its absolute value, if distance_left is positive it's 1, if negative it's -1 (e.g., 10/10=1, -10/10=-1)
-        distance_done = abs(distance_done) #the absolute value of distance_done should be distance_done, needed to be positive as the multiplier already stored the direction
-        distance_left = abs(distance_left) #the absolute value of distance_left should be distance_left, needed to be positive as the multiplier already stored the direction
-        if distance_left < 3: #if distance_left is less than 3 motor degrees
-            break #then stop, i.e., exit the while loop
-        if distance_left < deceleration : #if distance_left is less than deceleration (if already in the deceleration phase)
-            ratio = distance_left / deceleration #then the deceleration ratio is distance_left/deceleration, this is the ratio which is between 0-1
-            current_speed = max(ratio * max_speed, min_speed) * multiplier #current_speed is the maximum of min_speed (so it doesn't go slower) or ratio*max_speed, multiplied by the multiplier (1 or -1) for direction
-        elif distance_done < acceleration: #if not the previous, and distance_done is less than acceleration (it's in the acceleration phase)
-            ratio = distance_done / acceleration #the ratio equals distance_done / acceleration, this number can be 0-1
-            current_speed = max(ratio * max_speed, min_speed) * multiplier ##current_speed is the maximum of min_speed (so it doesn't go slower) or ratio*max_speed, multiplied by the multiplier (1 or -1) for direction
-        else: #if none of the above (neither accelerating nor decelerating)
-            current_speed = max_speed * multiplier #current_speed equals max_speed * multiplier, which can be 1 or -1, turning the number positive/negative
-        heading_error = (heading - hub.imu.heading()) * correction #heading_error equals heading (where it should go) minus the actual current degree multiplied by correction (needed to correct smoothly, not in one big jump)
-        correction_amount = current_speed * heading_error * multiplier #correction_amount equals current_speed * heading_error * multiplier (1,-1), this will be the amount to correct by
-        left_motor.run (current_speed - correction_amount) #left runs at current_speed - correction_amount (minus because if it veers right, positive error, it subtracts, i.e., slows down; if left, negative error, -- is +, i.e., speeds up)
-        right_motor.run(current_speed + correction_amount) #right runs at current_speed + correction_amount (plus because if it veers right, positive error, it stays +, i.e., speeds up; if left, negative error, it stays -, i.e., slows down)
-    left_motor.hold() #left stops (holds its position right there)
-    right_motor.hold()#right stops (holds its position right there)
+def drive_straight(distance, min_speed=40, acceleration=40, correction=0.01, max_speed = 700, deceleration=80, timeout = None): # Creates a function named drive_straight with parameters for distance and movement control
+    if timeout != None: # Check if a timeout limit is provided
+        timeout_watch = StopWatch() # Create a stopwatch object for the timeout
+        timeout_watch.resume() # Start the stopwatch
+    global heading # Allows the function to use the heading variable inside the function
+    left_motor.reset_angle(0) # Sets the left angle to 0
+    right_motor.reset_angle(0) # Sets the right angle to 0
+    distance = distance / 0.489 # Converts distance given in mm to motor degrees, dividing wheel circumference by 360
+    acceleration /= 0.489 # Converts acceleration given in mm to motor degrees, dividing wheel circumference by 360
+    deceleration /= 0.489 # Converts deceleration given in mm to motor degrees, dividing wheel circumference by 360
+    while True: # Starts a loop that runs until stopped
+        if timeout != None and timeout_watch.time() >= timeout: break # Exit the loop if the time limit is reached           
+        distance_done = (left_motor.angle()+right_motor.angle()) / 2 # Adds left and right angles and divides by 2, resulting in the average distance covered
+        distance_left = distance - distance_done # Subtracts distance_done from distance to get distance_left
+        multiplier = distance_left/abs(distance_left) # Divides distance_left by its absolute value to get the direction (1 or -1)
+        distance_done = abs(distance_done) # The absolute value of distance_done should be distance_done
+        distance_left = abs(distance_left) # The absolute value of distance_left should be distance_left
+        if distance_left < 3: # If distance_left is less than 3 motor degrees
+            break # Then stop, i.e., exit the while loop
+        if distance_left < deceleration : # If distance_left is less than deceleration (if already in the deceleration phase)
+            ratio = distance_left / deceleration # Then the deceleration ratio is distance_left/deceleration (0-1)
+            current_speed = max(ratio * max_speed, min_speed) * multiplier # Calculate speed for deceleration multiplied by the direction
+        elif distance_done < acceleration: # If not the previous, and distance_done is less than acceleration
+            ratio = distance_done / acceleration # The ratio equals distance_done / acceleration (0-1)
+            current_speed = max(ratio * max_speed, min_speed) * multiplier # Calculate speed for acceleration multiplied by the direction
+        else: # If none of the above (constant speed phase)
+            current_speed = max_speed * multiplier # Current_speed equals max_speed multiplied by the direction
+        heading_error = (heading - hub.imu.heading()) * correction # Calculate heading error multiplied by the correction factor
+        correction_amount = current_speed * heading_error * multiplier # Calculate the amount to correct by based on speed and error
+        left_motor.run (current_speed - correction_amount) # Apply speed to left motor with correction
+        right_motor.run(current_speed + correction_amount) # Apply speed to right motor with correction
+    left_motor.hold() # Left stops (holds its position right there)
+    right_motor.hold()# Right stops (holds its position right there)
  
-def turn(target_angle, max_speed=360, deceleration=80, min_speed=50, timeout = None): #creates a function named turn, defines parameters to be used; target_angle (in degrees), max_speed, deceleration (in degrees), min_speed, default parameters only work on average
-    if timeout != None:
-        timeout_watch = StopWatch()
-        timeout_watch.resume()
-    base_angle = hub.imu.heading() #base_angle equals the gyro value, needed to correct based on previous errors
-    global heading #allows the function to use the heading variable inside the function
-    target_heading = heading + target_angle #target_heading = heading (where it should have been) + target_angle (heading is used to fix previous errors)
-    heading = target_heading #heading equals target_heading
-    target_heading -= base_angle #subtract base_angle (the error) from target_heading
-    while True: #loop runs until exit
-        if timeout != None and timeout_watch.time() >= timeout: break
-        angle_done = hub.imu.heading() - base_angle #angle_done equals current gyro - base_angle
-        angle_left = target_heading - angle_done #angle_left equals target_heading - angle_done
-        multiplier = angle_left/abs(angle_left) #divides angle_left by its absolute value, if angle_left is positive it's 1, if negative it's -1 (e.g., 10/10=1, -10/10=-1)
-        angle_left = abs(angle_left) #the absolute value of angle_left should be angle_left, needed to be positive as the multiplier already stored direction
-        if angle_left <= 0.5: #if angle_left is less than or equal to 0.5
-            break #then stop, i.e., exit the while loop      
-        if angle_left < deceleration : #if angle_left is less than deceleration (i.e., in the deceleration phase)
-            ratio = angle_left / deceleration #then the deceleration ratio is angle_left/deceleration, this ratio is between 0-1
-            current_speed = max(ratio * max_speed, min_speed) * multiplier #current_speed is the maximum of min_speed (so it doesn't go slower) or ratio*max_speed, multiplied by the multiplier (1 or -1)
-        else: #if not the previous, i.e., not decelerating
-            current_speed = max_speed * multiplier #then current_speed equals max_speed * multiplier (1 or -1)
-        left_motor.run(-current_speed) #left runs at -current_speed (minus because if turning right, positive error becomes minus, goes backward; if left, negative error, -- is +, goes forward)
-        right_motor.run(current_speed) #right runs at current_speed (plus because if turning right, positive stays positive, goes forward; if left, negative stays negative, goes backward)
-    left_motor.hold() #left stops (holds its position)
-    right_motor.hold() #right stops (holds its position)
-    wait(100)
+def turn(target_angle, max_speed=360, deceleration=80, min_speed=50, timeout = None): # Creates a function named turn with parameters for angle and speed control
+    if timeout != None: # Check if a timeout limit is provided
+        timeout_watch = StopWatch() # Create a stopwatch object for the timeout
+        timeout_watch.resume() # Start the stopwatch
+    base_angle = hub.imu.heading() # Base_angle equals the gyro value, needed to correct based on previous errors
+    global heading # Allows the function to use the heading variable inside the function
+    target_heading = heading + target_angle # Target_heading equals heading plus the requested turn angle
+    heading = target_heading # Heading equals target_heading
+    target_heading -= base_angle # Subtract base_angle from target_heading to handle relative turn
+    while True: # Loop runs until exit
+        if timeout != None and timeout_watch.time() >= timeout: break # Exit the loop if the time limit is reached
+        angle_done = hub.imu.heading() - base_angle # Angle_done equals current gyro minus the base angle
+        angle_left = target_heading - angle_done # Angle_left equals target_heading minus angle_done
+        multiplier = angle_left/abs(angle_left) # Determine turn direction (1 or -1)
+        angle_left = abs(angle_left) # The absolute value of angle_left should be angle_left
+        if angle_left <= 0.5: # If angle_left is less than or equal to 0.5
+            break # Then stop, i.e., exit the while loop      
+        if angle_left < deceleration : # If angle_left is less than deceleration (deceleration phase)
+            ratio = angle_left / deceleration # Then the deceleration ratio is angle_left/deceleration
+            current_speed = max(ratio * max_speed, min_speed) * multiplier # Calculate current turning speed
+        else: # If not the previous, i.e., not decelerating
+            current_speed = max_speed * multiplier # Then current_speed equals max_speed multiplied by direction
+        left_motor.run(-current_speed) # Spin left motor in the calculated direction
+        right_motor.run(current_speed) # Spin right motor in the opposite direction
+    left_motor.hold() # Left stops (holds its position)
+    right_motor.hold() # Right stops (holds its position)
+    wait(100) # Wait for 100 milliseconds
  
-def attachment_right_move(angle, speed = 400, timeout=None): #creates a function named attachment_right_move, with angle and speed as parameters, referring to the right attachment motor
-    if timeout != None:
-        timeout_watch = StopWatch()
-        timeout_watch.resume()
-        attachment_right.run_angle(speed, angle * left_gear_ratio, wait=False) #runs attachment_right in degrees, speed and angle given as parameters multiplied by left_gear_ratio
-        while abs(attachment_right.angle()-(angle * right_gear_ratio)) > 1:
-            if timeout_watch.time() >= timeout: break
-    else:
-        attachment_right.run_angle(speed, angle * left_gear_ratio) #runs attachment_right in degrees, speed and angle given as parameters multiplied by left_gear_ratio
+def attachment_right_move(angle, speed = 400, timeout=None): # Creates a function named attachment_right_move for the right motor
+    if timeout != None: # Check if a timeout limit is provided
+        timeout_watch = StopWatch() # Create a stopwatch object for the timeout
+        timeout_watch.resume() # Start the stopwatch
+        attachment_right.run_angle(speed, angle * left_gear_ratio, wait=False) # Start moving right attachment in the background
+        while abs(attachment_right.angle()-(angle * right_gear_ratio)) > 1: # Loop until target angle is reached
+            if timeout_watch.time() >= timeout: break # Break if timeout occurs
+    else: # If no timeout is specified
+        attachment_right.run_angle(speed, angle * left_gear_ratio) # Runs attachment_right in degrees and waits for completion
 
-def attachment_left_move(angle, speed = 400, timeout = None): #creates a function named attachment_left_move, with angle and speed as parameters, referring to the left attachment motor
-    if timeout != None:
-        timeout_watch = StopWatch()
-        timeout_watch.resume()
-        attachment_left.run_angle(speed, angle * left_gear_ratio, wait=False) #runs attachment_left in degrees, speed and angle given as parameters multiplied by left_gear_ratio
-        while abs(attachment_left.angle()-(angle * left_gear_ratio)) > 1:
-            if timeout != None and timeout_watch.time() >= timeout: break
-    else:
-        attachment_left.run_angle(speed, angle * left_gear_ratio) #runs attachment_left in degrees, speed and angle given as parameters multiplied by left_gear_ratio
+def attachment_left_move(angle, speed = 400, timeout = None): # Creates a function named attachment_left_move for the left motor
+    if timeout != None: # Check if a timeout limit is provided
+        timeout_watch = StopWatch() # Create a stopwatch object for the timeout
+        timeout_watch.resume() # Start the stopwatch
+        attachment_left.run_angle(speed, angle * left_gear_ratio, wait=False) # Start moving left attachment in the background
+        while abs(attachment_left.angle()-(angle * left_gear_ratio)) > 1: # Loop until target angle is reached
+            if timeout != None and timeout_watch.time() >= timeout: break # Break if timeout occurs
+    else: # If no timeout is specified
+        attachment_left.run_angle(speed, angle * left_gear_ratio) # Runs attachment_left in degrees and waits for completion
         
-def attachment_right_background(angle, speed = 400): #creates a function named attachment_right_background, with angle and speed as parameters, works during movement
-    attachment_right.run_angle(speed, angle * right_gear_ratio, wait=False) #runs attachment_right in degrees, speed and angle given multiplied by right_gear_ratio, doesn't wait (runs in background)
+def attachment_right_background(angle, speed = 400): # Creates a function named attachment_right_background for non-blocking movement
+    attachment_right.run_angle(speed, angle * right_gear_ratio, wait=False) # Runs attachment_right in degrees and does not wait
  
-def attachment_left_background(angle, speed = 400): #creates a function named attachment_left_background, with angle and speed as parameters, works during movement
-    attachment_left.run_angle(speed, angle * left_gear_ratio, wait=False) #runs attachment_left in degrees, speed and angle given multiplied by left_gear_ratio, doesn't wait (runs in background)
+def attachment_left_background(angle, speed = 400): # Creates a function named attachment_left_background for non-blocking movement
+    attachment_left.run_angle(speed, angle * left_gear_ratio, wait=False) # Runs attachment_left in degrees and does not wait
  
-hub.system.set_stop_button(Button.BLUETOOTH) #sets the stop button to the bluetooth button
-hub.display.number(1) #displays number 1, as run 1 starts
-voltage = hub.battery.voltage()
-print(voltage)
+hub.system.set_stop_button(Button.BLUETOOTH) # Sets the stop button to the bluetooth button
+hub.display.number(1) # Displays number 1, as run 1 starts
+voltage = hub.battery.voltage() # Gets the battery voltage
+print(voltage) # Prints the battery voltage to the console
  
-def run_1(): #creates a function named run_1
-    hub.imu.reset_heading(0) #sets gyro value to 0
-    wait(200)
-    attachment_left_move(-225)
-    wait(100)
-    attachment_right_background(69)
-    drive_straight(635)
-    turn(70)
-    drive_straight(135)
-    turn(-110)
-    drive_straight(365)
-    attachment_right_move(155, speed=70)
-    drive_straight(-330)  
-    turn(95)
-    drive_straight(-120)
-    attachment_right_move(-215)
-    drive_straight(125)
-    turn(-10)
-    drive_straight(20)
-    attachment_right_move(215, speed=100)
-    drive_straight(-60)
-    turn(42)
-    drive_straight(-395)
-    drive_straight(35)
-    turn(-90, max_speed=500, min_speed=100)
-    drive_straight(-215)
-    wait(300)
-    attachment_left_move(219, speed=1000)
-    wait(100)
-    attachment_left_move(-172, speed=100)
-    drive_straight(-445)
+def run_1(): # Creates a function named run_1
+    hub.imu.reset_heading(0) # Sets gyro value to 0
+    wait(200) # Wait for 200 milliseconds
+    attachment_left_move(-225) # Execute left attachment move
+    wait(100) # Wait for 100 milliseconds
+    attachment_right_background(69) # Start right attachment move in background
+    drive_straight(635) # Drive straight for 635mm
+    turn(70) # Turn 70 degrees
+    drive_straight(135) # Drive straight for 135mm
+    turn(-110) # Turn -110 degrees
+    drive_straight(365) # Drive straight for 365mm
+    attachment_right_move(155, speed=70) # Move right attachment slowly
+    drive_straight(-330) # Drive straight backward for 330mm
+    turn(95) # Turn 95 degrees
+    drive_straight(-120) # Drive straight backward for 120mm
+    attachment_right_move(-215) # Move right attachment
+    drive_straight(125) # Drive straight for 125mm
+    turn(-10) # Turn -10 degrees
+    drive_straight(20) # Drive straight for 20mm
+    attachment_right_move(215, speed=100) # Move right attachment
+    drive_straight(-60) # Drive straight backward for 60mm
+    turn(42) # Turn 42 degrees
+    drive_straight(-395) # Drive straight backward for 395mm
+    drive_straight(35) # Drive straight for 35mm
+    turn(-90, max_speed=500, min_speed=100) # Turn -90 degrees with specific speeds
+    drive_straight(-215) # Drive straight backward for 215mm
+    wait(300) # Wait for 300 milliseconds
+    attachment_left_move(219, speed=1000) # Move left attachment quickly
+    wait(100) # Wait for 100 milliseconds
+    attachment_left_move(-172, speed=100) # Move left attachment slowly
+    drive_straight(-445) # Drive straight backward for 445mm
  
-def run_2(): #creates a function named run_2
-    hub.imu.reset_heading(0) #sets gyro value to 0
-    wait(200)
-    drive_straight(666, max_speed=800)
-    attachment_right_move(255, speed=200)
-    attachment_left_move(2200, speed=888)
-    drive_straight(-15)
-    attachment_right_move(-230)
-    drive_straight(-750, max_speed=999)
+def run_2(): # Creates a function named run_2
+    hub.imu.reset_heading(0) # Sets gyro value to 0
+    wait(200) # Wait for 200 milliseconds
+    drive_straight(666, max_speed=800) # Drive straight for 666mm at high speed
+    attachment_right_move(255, speed=200) # Move right attachment
+    attachment_left_move(2200, speed=888) # Move left attachment a long distance
+    drive_straight(-15) # Drive straight backward for 15mm
+    attachment_right_move(-230) # Move right attachment back
+    drive_straight(-750, max_speed=999) # Drive straight backward at max speed
  
-def run_3(): #creates a function named run_3
-    global right_gear_ratio, left_gear_ratio #allows the function to use right_gear_ratio and left_gear_ratio inside the function
-    right_gear_ratio = 1
-    left_gear_ratio = 1
-    hub.imu.reset_heading(0) #sets gyro value to 0
-    wait(200)
-    attachment_left_background(-400)
-    drive_straight(115)
-    turn(56)
-    drive_straight(825)
-    attachment_right_move(-210, speed=400)
-    turn(-34.67)
-    attachment_right_background(210)
-    drive_straight(370)
-    drive_straight(-30)
-    turn(110, max_speed=180)
-    attachment_right_move(-240, speed=900)
-    drive_straight(200)
-    drive_straight(-135)
-    attachment_right_move(275)
-    turn(-46.4)
-    drive_straight(170)
-    attachment_left_move(395)
-    turn(10.9)
-    drive_straight(55)
-    drive_straight(-45)
-    turn(-13.3)
-    drive_straight(-120)
-    turn(9)
-    attachment_left_move(-355)
-    turn(16)
-    drive_straight(370)
-    attachment_right_move(-210, speed=899)
-    attachment_right_move(210, speed=799)
-    attachment_right_move(-210, speed=799)
-    attachment_right_move(210, speed=799)
-    attachment_right_move(-210, speed=899)
-    attachment_right_move(210, speed=799)
-    turn(-69)
-    drive_straight(90)
-    attachment_left_move(355, speed=550)
-    attachment_left_move(-350)
-    drive_straight(-60)
-    turn(45)
-    drive_straight(390)
-    attachment_left_move(355, speed=999)
+def run_3(): # Creates a function named run_3
+    global right_gear_ratio, left_gear_ratio # Allows the function to use gear ratio variables
+    right_gear_ratio = 1 # Set right gear ratio to 1
+    left_gear_ratio = 1 # Set left gear ratio to 1
+    hub.imu.reset_heading(0) # Sets gyro value to 0
+    wait(200) # Wait for 200 milliseconds
+    attachment_left_background(-400) # Move left attachment in background
+    drive_straight(115) # Drive straight for 115mm
+    turn(56) # Turn 56 degrees
+    drive_straight(825) # Drive straight for 825mm
+    attachment_right_move(-210, speed=400) # Move right attachment
+    turn(-34.67) # Turn -34.67 degrees
+    attachment_right_background(210) # Move right attachment in background
+    drive_straight(370) # Drive straight for 370mm
+    drive_straight(-30) # Drive straight backward for 30mm
+    turn(110, max_speed=180) # Turn 110 degrees slowly
+    attachment_right_move(-240, speed=900) # Move right attachment quickly
+    drive_straight(200) # Drive straight for 200mm
+    drive_straight(-135) # Drive straight backward for 135mm
+    attachment_right_move(275) # Move right attachment
+    turn(-46.4) # Turn -46.4 degrees
+    drive_straight(170) # Drive straight for 170mm
+    attachment_left_move(395) # Move left attachment
+    turn(10.9) # Turn 10.9 degrees
+    drive_straight(55) # Drive straight for 55mm
+    drive_straight(-45) # Drive straight backward for 45mm
+    turn(-13.3) # Turn -13.3 degrees
+    drive_straight(-120) # Drive straight backward for 120mm
+    turn(9) # Turn 9 degrees
+    attachment_left_move(-355) # Move left attachment
+    turn(16) # Turn 16 degrees
+    drive_straight(370) # Drive straight for 370mm
+    attachment_right_move(-210, speed=899) # Move right attachment quickly
+    attachment_right_move(210, speed=799) # Move right attachment back
+    attachment_right_move(-210, speed=799) # Move right attachment again
+    attachment_right_move(210, speed=799) # Move right attachment back
+    attachment_right_move(-210, speed=899) # Move right attachment again
+    attachment_right_move(210, speed=799) # Move right attachment back
+    turn(-69) # Turn -69 degrees
+    drive_straight(90) # Drive straight for 90mm
+    attachment_left_move(355, speed=550) # Move left attachment
+    attachment_left_move(-350) # Move left attachment back
+    drive_straight(-60) # Drive straight backward for 60mm
+    turn(45) # Turn 45 degrees
+    drive_straight(390) # Drive straight for 390mm
+    attachment_left_move(355, speed=999) # Move left attachment at max speed
  
-def run_4(): #creates a function named run_4
-    hub.imu.reset_heading(0) #sets gyro value to 0
-    wait(200)
+def run_4(): # Creates a function named run_4
+    hub.imu.reset_heading(0) # Sets gyro value to 0
+    wait(200) # Wait for 200 milliseconds
 
-current_run = 0 #creates a variable named current_run with a value of 0, which counts the run number
-runs = [run_1, run_2, run_3, run_4] #creates an array named runs and specifies its elements
-max_runs = len(runs) #creates max_runs and its value is the number of elements in runs
+current_run = 0 # Creates a variable named current_run with a value of 0, which counts the run number
+runs = [run_1, run_2, run_3, run_4] # Creates an array named runs and specifies its elements
+max_runs = len(runs) # Creates max_runs and its value is the number of elements in runs
  
-while True: #a loop that runs until we exit
-    hub.display.number(current_run + 1) #hub displays current_run + 1
-    pressed = [] #creates an array named pressed and sets it to empty
-    while not any(pressed): #as long as there's nothing in the pressed array, run
-        pressed = hub.buttons.pressed() #the pressed array contains the buttons pressed on the hub  
-    hold_timer = StopWatch() #creates the hold_timer variable, starting the stopwatch
-    vibrated = False #creates a variable named vibrated and sets it to False
-    while hub.buttons.pressed(): #a loop that runs as long as a button is pressed
-        if hold_timer.time() > 500: #if the pressed time is more than half a second
-            vibrated = True #vibrated becomes True
-            attachment_left_background(45, speed=900) #starts attachment_left_background to 45 degrees, at speed 600 (note: code says 900)
-            attachment_right_move(45, speed=900) #starts attachment_right_move to 45 degrees, at speed 600 (note: code says 900)
-            attachment_left_background(-45, speed=900) #starts attachment_left_background to 45 degrees, at speed 600 (note: code says 900)
-            attachment_right_move(-45, speed=900) #starts attachment_right_move to 45 degrees, at speed 600 (note: code says 900)
-        pass #continue
-    if vibrated: #if it already vibrated
-        continue  #continue
+while True: # A loop that runs until we exit
+    hub.display.number(current_run + 1) # Hub displays current_run + 1
+    pressed = [] # Creates an array named pressed and sets it to empty
+    while not any(pressed): # As long as there's nothing in the pressed array, run
+        pressed = hub.buttons.pressed() # The pressed array contains the buttons pressed on the hub  
+    hold_timer = StopWatch() # Creates the hold_timer variable, starting the stopwatch
+    vibrated = False # Creates a variable named vibrated and sets it to False
+    while hub.buttons.pressed(): # A loop that runs as long as a button is pressed
+        if hold_timer.time() > 500: # If the pressed time is more than half a second
+            vibrated = True # Vibrated becomes True
+            attachment_left_background(45, speed=900) # Starts attachment_left_background move for calibration
+            attachment_right_move(45, speed=900) # Starts attachment_right_move for calibration
+            attachment_left_background(-45, speed=900) # Calibrates left attachment back
+            attachment_right_move(-45, speed=900) # Calibrates right attachment back
+        pass # Continue waiting
+    if vibrated: # If it already vibrated
+        continue  # Skip to the next loop iteration
  
-    if Button.RIGHT in pressed: #if the right button is in pressed
-        current_run = (current_run + 1) % max_runs #current_run equals current_run + 1 remainder of max_runs
-    if Button.LEFT in pressed: #if the left button is in pressed
-        current_run = (current_run - 1) % max_runs #current_run equals current_run - 1 remainder of max_runs
-    if Button.CENTER in pressed: #if the center button is in pressed
-        heading = 0
-        hub.imu.reset_heading(0) #sets gyro value to 0
-        try: #run the code, if it exits go to except
-            hub.system.set_stop_button(Button.CENTER) #the stop button should be the center button
-            runs[current_run]() #runs the current run element of runs
-            current_run = (current_run + 1) % max_runs #current_run equals current_run + 1 remainder of max_runs
-        except SystemExit: #if trying to exit, do this
-            while Button.CENTER in hub.buttons.pressed(): #as long as the center button is pressed
-                pass #continue
-        left_motor.stop() #left stops
-        right_motor.stop() #right stops
-        attachment_left.stop() #attachment_left stops
-        attachment_right.stop() #attachment_right stops
-        hub.system.set_stop_button(Button.BLUETOOTH) #the stop button should be bluetooth
+    if Button.RIGHT in pressed: # If the right button is in pressed
+        current_run = (current_run + 1) % max_runs # Current_run equals current_run + 1 remainder of max_runs
+    if Button.LEFT in pressed: # If the left button is in pressed
+        current_run = (current_run - 1) % max_runs # Current_run equals current_run - 1 remainder of max_runs
+    if Button.CENTER in pressed: # If the center button is in pressed
+        heading = 0 # Resets the target heading to 0
+        hub.imu.reset_heading(0) # Sets the gyro value to 0
+        try: # Try to run the code, go to except if interrupted
+            hub.system.set_stop_button(Button.CENTER) # The stop button should be the center button
+            runs[current_run]() # Runs the current run element of runs
+            current_run = (current_run + 1) % max_runs # Increment the run selection
+        except SystemExit: # If trying to exit, do this
+            while Button.CENTER in hub.buttons.pressed(): # As long as the center button is pressed
+                pass # Wait for button release
+        left_motor.stop() # Left motor stops
+        right_motor.stop() # Right motor stops
+        attachment_left.stop() # Left attachment motor stops
+        attachment_right.stop() # Right attachment motor stops
+        hub.system.set_stop_button(Button.BLUETOOTH) # Reset the stop button to bluetooth
