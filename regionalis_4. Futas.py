@@ -4,8 +4,8 @@ from pybricks.parameters import * #beimportálja a paramétereket
 from pybricks.tools import * #beimportálja a toolsokat
  
 hub = PrimeHub() #az agyat elnevezi hubnak
-bal  = Motor(Port.F) #a motort ami a B portba van elnevezzük balnak és óra járásával megegyező irányba forog
-jobb = Motor(Port.B, Direction.COUNTERCLOCKWISE) #a motort ami az F portba van elnevezzük balnak és óra járásával ellentétes irányba forog
+bal  = Motor(Port.B) #a motort ami a B portba van elnevezzük balnak és óra járásával megegyező irányba forog
+jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE) #a motort ami az F portba van elnevezzük balnak és óra járásával ellentétes irányba forog
 feltet_bal = Motor(Port.E) #a feltét motort ami az E portba van elnevezzük feltet_balnak és a fogaskerék áttét 12, 12, 20
 feltet_jobb = Motor(Port.A)  #a feltét motort ami az A portba van elnevezzük feltet_jobbnak és a fogaskerék áttét 12, 12, 20
 feltet_bal.control.limits(1000, 6500)
@@ -90,7 +90,7 @@ def jobb_feltet(angle, speed = 400, timeout=None): #létrehozunk egy jobb_feltet
             if timeout_watch.time() >= timeout: break
     else:
         feltet_jobb.run_angle(speed, angle*bal_attet) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel
-
+ 
  
 def bal_feltet(angle, speed = 400, timeout = None): #létrehozunk egy bal_feltet nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a bal feltét motorra vonatkozik
     if timeout != None:
@@ -101,7 +101,7 @@ def bal_feltet(angle, speed = 400, timeout = None): #létrehozunk egy bal_feltet
             if timeout != None and timeout_watch.time() >= timeout: break
     else:
         feltet_bal.run_angle(speed, angle*bal_attet) #a feltet_balt lefutatjuk fokban, itt paraméterként a speed és az angle van megadva beszorozva a bal_atettel
-        
+       
    
  
 def jobb_feltet_hatter(angle, speed = 400): #létrehozunk egy jobb_feltet_hatter nevű függvényt, amiben paraméterként benne van a fok és a sebesség és ez a jobb feltét motorra vonatkozik és ez mozgás közben is működik
@@ -209,16 +209,24 @@ def futas_4(): #létrehozunk egy futas_4 nevü függvényt
     jobb_feltet_hatter (20)
     egyenes (75)
     kanyarodas (-48)
-    jobb_feltet_hatter (-400)
+    jobb_feltet_hatter (-390)
     egyenes (243)
-    kanyarodas (-20)
+    kanyarodas (-18)
     jobb_feltet_hatter (200)
-    egyenes (-25) 
+    egyenes (-25)
     kanyarodas (-10)
-    egyenes (195)
+    egyenes (183)
     jobb_feltet (-200)
     kanyarodas (-30)
-
+    egyenes (300)
+    kanyarodas (54.5)
+    egyenes (177)
+    jobb_feltet (300)
+    egyenes (50)
+    bal_feltet (120)
+    egyenes (-200)
+   
+ 
 futas = 0 #létrehozzunk egy futas változót aminek 0 az értéke, ami számolja hányadik futás
 futasok = [futas_1, futas_2, futas_3, futas_4] #létrehozunk egy futasok nevű tömböt és megadjuk az elemeit
 max_futas = len(futasok) #a max_futast létre hozzuk és az értéke a futasok elemszáma
@@ -260,4 +268,3 @@ while True: #egy ciklus ami addig fut amig nem lépünk ki
         feltet_bal.stop() #feltet_bal álljon le
         feltet_jobb.stop() #feltet_jobb álljon le
         hub.system.set_stop_button(Button.BLUETOOTH) # a stop button legyen a bluetooth
- 
