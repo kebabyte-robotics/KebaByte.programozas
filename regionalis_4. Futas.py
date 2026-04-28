@@ -224,14 +224,15 @@ def futas_4(): #létrehozunk egy futas_4 nevü függvényt
     kanyarodas (-14.5)
     egyenes (153)
     jobb_feltet (-200)
-    kanyarodas (-30)
+    kanyarodas (-30, k_legnagyobb_sebesseg=720)
     egyenes (320)
     kanyarodas (56)
     egyenes (160)
     jobb_feltet (300)
     egyenes (45)
     kanyarodas (15)
-    bal_feltet (160)
+    bal_feltet (160, speed=800)
+    wait (2000)
     egyenes (-200)
 
 
