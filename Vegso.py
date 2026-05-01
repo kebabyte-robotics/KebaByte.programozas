@@ -8,7 +8,7 @@ bal  = Motor(Port.B) #a motort ami a B portba van elnevezzük balnak és óra j�
 jobb = Motor(Port.F, Direction.COUNTERCLOCKWISE) #a motort ami az F portba van elnevezzük balnak és óra járásával ellentétes irányba forog
 feltet_bal = Motor(Port.E) #a feltét motort ami az E portba van elnevezzük feltet_balnak és a fogaskerék áttét 12, 12, 20
 feltet_jobb = Motor(Port.A)  #a feltét motort ami az A portba van elnevezzük feltet_jobbnak és a fogaskerék áttét 12, 12, 20
-feltet_bal.control.limits(1000, 6500)
+feltet_bal.control.limits(1000, 10000)
 feltet_jobb.control.limits(1000, 6500)
 bal.control.limits(2000, 5500)
 jobb.control.limits(2000, 5500)
@@ -118,50 +118,49 @@ print(voltage)
 def futas_1(): #létrehozunk egy futas_1 nevü függvényt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
-    jobb_feltet_hatter (72)
+    jobb_feltet_hatter (290)
     egyenes (620)
-    kanyarodas (69)
-    egyenes (172)
-    kanyarodas (-115.666)
-    egyenes (515, e_legkisebb_sebesseg=500, e_legnagyobb_sebesseg=999)
-    egyenes(-72,e_korekcio=0.00000000000000000000000000000000000000000000000000000001)
+    kanyarodas (68)
+    egyenes (212)
+    kanyarodas (-110)
+    jobb_feltet(-205)
+    egyenes (519, e_legkisebb_sebesseg=500, e_legnagyobb_sebesseg=999)
+    egyenes(-72)
     jobb_feltet (260, speed=140)
-    egyenes (-120, e_korekcio=0.00000000000000000000000000000000000000001)
-    kanyarodas(167, k_legnagyobb_sebesseg=180)
-    egyenes(-186, e_korekcio=0.00000000000000000000000001)
+    egyenes (-120)
+    kanyarodas(166, k_legnagyobb_sebesseg=180)
+    egyenes(-195)
     bal_feltet(320)
-    kanyarodas(-31.5)
-    jobb_feltet(-335, speed=200)
-    egyenes(125, e_legkisebb_sebesseg=50, e_legnagyobb_sebesseg=100, e_korekcio=0.00000000000000001)
-    bal_feltet(-55, speed=72)
+    kanyarodas(-36)
+    jobb_feltet(-337, speed=200)
+    egyenes(121)
+    "egyenes(115, e_legkisebb_sebesseg=50, e_legnagyobb_sebesseg=100, e_korekcio=0.00000000000000001)"
+    bal_feltet(-40, speed=72)
     jobb_feltet(235, speed=70)
     egyenes(-120, e_legkisebb_sebesseg=50 ,e_legnagyobb_sebesseg=100)
     bal_feltet(-320)
-    kanyarodas(50)
-    egyenes(135)
-    bal_feltet(340, speed=455)
-    egyenes(25)
-    jobb_feltet(-235)
-    egyenes(-120)
-    bal_feltet(-340)
-    jobb_feltet(385)
-    kanyarodas(-110)
-    egyenes(-472, e_legnagyobb_sebesseg=765)
-    bal_feltet(320)
+    egyenes(55)
+    kanyarodas(-67)
+    egyenes(-459)
+    kanyarodas(-15)
+    egyenes(-12)
+    bal_feltet(310)
     wait(100)
-    bal_feltet(-110, speed=200)
-    egyenes(-300)
+    bal_feltet(-105, speed=100)
+    egyenes(-340)
+
+
+
 
 def futas_2(): #létrehozunk egy futas_2 nevü függvényt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
     wait(200)
-    egyenes(650, e_legnagyobb_sebesseg=800)
+    egyenes(650)
     jobb_feltet(255, speed=200)
     bal_feltet(2200, speed=888)
     egyenes(-15)
     jobb_feltet(-230)
     egyenes(-750, e_legnagyobb_sebesseg=999)
-    kanyarodas(-180)
  
 def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     global jobb_attet, bal_attet #engedélyezzük a függvénynek a jobb_attet és a bal_attet változó használatát a függvényen belül
@@ -174,57 +173,65 @@ def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     kanyarodas(56)
     egyenes(825, e_legnagyobb_sebesseg=800)
     jobb_feltet(-210, speed=300)
-    kanyarodas(-34.666)
+    kanyarodas(-33)
     jobb_feltet_hatter(210)
     egyenes(370)
     egyenes(-30)
-    kanyarodas(110, k_legnagyobb_sebesseg=90)
+    kanyarodas(108)
     jobb_feltet(-240, speed=900)
-    egyenes(200)
+    egyenes(190)
     egyenes(-135)
-    jobb_feltet(275)
+    jobb_feltet(272)
     kanyarodas(-46.4)
     egyenes(164)
-    kanyarodas(7.5)
+    kanyarodas(7.72)
     bal_feltet(395)
-    egyenes(55)
-    egyenes(-47)
-    kanyarodas(-6.65)
-    egyenes(-84, e_legnagyobb_sebesseg=500)
+    egyenes(65)
+    egyenes(-55)
+    kanyarodas(-8.4)
+    egyenes(-63, e_legnagyobb_sebesseg=400)
     kanyarodas(9)
     bal_feltet(-355)
     kanyarodas(15)
-    egyenes(345)
-    jobb_feltet(-210, speed=899)
+    egyenes(337.5)
+    jobb_feltet(-210, speed=999)
     jobb_feltet(210, speed=799)
-    jobb_feltet(-210, speed=799)
+    jobb_feltet(-210, speed=999)
     jobb_feltet(210, speed=799)
-    jobb_feltet(-210, speed=899)
+    jobb_feltet(-210, speed=999)
     jobb_feltet(210, speed=799)
     kanyarodas(-62.67)
-    egyenes(75)
+    egyenes(64)
     bal_feltet(355, speed=666)
     bal_feltet(-350)
     egyenes(-60)
     kanyarodas(42)
     egyenes(390, e_legnagyobb_sebesseg=999)
     bal_feltet(142, speed=1000)
-
+    bal.stop() #bal áljon le
+    jobb.stop() #jobb áljon le
+    feltet_bal.stop() #feltet_bal álljon le
+    feltet_jobb.stop() #feltet_jobb álljon le
  
 def futas_4(): #létrehozunk egy futas_4 nevü függvényt
     hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
-    jobb_feltet(405,speed=800)
-    egyenes(95)
-    kanyarodas(-50)
-    jobb_feltet(-405, speed=800)
-    egyenes(235)
-    kanyarodas(-12)
-    egyenes(-60)
-    jobb_feltet(405, speed=800)
-    kanyarodas(-14)
-    egyenes(190)
-    jobb_feltet(-405, speed=800)
-    kanyarodas(-25)
+    jobb_feltet(530, speed=700)
+    egyenes (110)
+    kanyarodas (-48)
+    jobb_feltet(-530)
+    egyenes (233)
+    kanyarodas (-48, k_legnagyobb_sebesseg=999)
+    jobb_feltet(520)
+    egyenes (510)
+    kanyarodas(53)
+    jobb_feltet(-530)
+    egyenes(111)
+    jobb_feltet(530, speed=999)
+    kanyarodas(28)
+    egyenes(-72)
+    bal_feltet(222, speed=500)
+    egyenes(-140)
+ 
 
 futas = 0 #létrehozzunk egy futas változót aminek 0 az értéke, ami számolja hányadik futás
 futasok = [futas_1, futas_2, futas_3, futas_4] #létrehozunk egy futasok nevű tömböt és megadjuk az elemeit
@@ -257,10 +264,6 @@ while True: #egy ciklus ami addig fut amig nem lépünk ki
         hub.imu.reset_heading(0) #a gyro értékét 0-ra állítjuk
         try: #futassd le a kódot, ha kilép menj az exceptre
             hub.system.set_stop_button(Button.CENTER) # a stop button legyen a középső gomb
-            bal.stop() #bal áljon le
-            jobb.stop() #jobb áljon le
-            feltet_bal.stop() #feltet_bal álljon le
-            feltet_jobb.stop() #feltet_jobb álljon le
             futasok[futas]() #futassa le a futasok futas elemét
             futas = (futas + 1) % max_futas #a futas egyen egyenlő a futas + 1nak a maradéka a max_futassal
         except SystemExit: #ha ki akar lépni ezt csináld
