@@ -135,7 +135,7 @@ def futas_1(): #létrehozunk egy futas_1 nevü függvényt
     jobb_feltet(-337, speed=200)
     egyenes(121)
     "egyenes(115, e_legkisebb_sebesseg=50, e_legnagyobb_sebesseg=100, e_korekcio=0.00000000000000001)"
-    bal_feltet(-40, speed=72)
+    bal_feltet(-42, speed=72)
     jobb_feltet(235, speed=70)
     egyenes(-120, e_legkisebb_sebesseg=50 ,e_legnagyobb_sebesseg=100)
     bal_feltet(-320)
@@ -143,11 +143,11 @@ def futas_1(): #létrehozunk egy futas_1 nevü függvényt
     kanyarodas(-67)
     egyenes(-459)
     kanyarodas(-15)
-    egyenes(-12)
+    egyenes(-18)
     bal_feltet(310)
     wait(100)
     bal_feltet(-105, speed=100)
-    egyenes(-340)
+    egyenes(-380)
 
 
 
@@ -184,7 +184,7 @@ def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     jobb_feltet(272)
     kanyarodas(-46.4)
     egyenes(164)
-    kanyarodas(7.72)
+    kanyarodas(7.19)
     bal_feltet(395)
     egyenes(65)
     egyenes(-55)
@@ -192,8 +192,8 @@ def futas_3(): #létrehozunk egy futas_3 nevü függvényt
     egyenes(-63, e_legnagyobb_sebesseg=400)
     kanyarodas(9)
     bal_feltet(-355)
-    kanyarodas(15)
-    egyenes(337.5)
+    kanyarodas(15.2)
+    egyenes(335)
     jobb_feltet(-210, speed=999)
     jobb_feltet(210, speed=799)
     jobb_feltet(-210, speed=999)
