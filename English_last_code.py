@@ -16,9 +16,7 @@ while not hub.imu.ready(): hub.display.char("x") # Wait until the gyro is ready 
  
 hub.imu.reset_heading(0) # Sets the gyro value to 0
 heading = 0 # Creates a variable named heading with a value of 0
-right_gear_ratio = 1 # Creates a variable named right_gear_ratio with a value of 1, this will count the gear ratios
-left_gear_ratio = 1 # Creates a variable named left_gear_ratio with a value of 1, this will count the gear ratios
- 
+
 def straight(s_distance, s_min_speed=40, s_acceleration=40, s_correction=0.01, s_max_speed = 700, s_deceleration=80, s_timeout = None): # Creates a function named straight with parameters for s_distance and movement control
     if s_timeout != None: # Check if a s_timeout limit is provided
         s_timeout_watch = StopWatch() # Create a stopwatch object for the s_timeout
@@ -50,9 +48,9 @@ def straight(s_distance, s_min_speed=40, s_acceleration=40, s_correction=0.01, s
         s_correction_amount = s_current_speed * s_heading_error * s_multiplier # Calculate the amount to correct by based on speed and error
         left_motor.run (s_current_speed - s_correction_amount) # Apply speed to left motor with s_correction
         right_motor.run(s_current_speed + s_correction_amount) # Apply speed to right motor with s_correction
-    left_motor.hold() # Left stops (holds its position right there)
-    right_motor.hold()# Right stops (holds its position right there)
- 
+    left_motor.stop() # Left stops (stops its position right there)
+    right_motor.stop()# Right stops (stops its position right there)
+
 def turn(t_target_angle, t_max_speed=360, t_deceleration=80, t_min_speed=50, t_timeout = None): # Creates a function named turn with parameters for angle and speed control
     if t_timeout != None: # Check if a t_timeout limit is provided
         t_timeout_watch = StopWatch() # Create a stopwatch object for the t_timeout
@@ -77,35 +75,35 @@ def turn(t_target_angle, t_max_speed=360, t_deceleration=80, t_min_speed=50, t_t
             t_current_speed = t_max_speed * t_multiplier # Then t_current_speed equals t_max_speed multiplied by direction
         left_motor.run(-t_current_speed) # Spin left motor in the calculated direction
         right_motor.run(t_current_speed) # Spin right motor in the opposite direction
-    left_motor.hold() # Left stops (holds its position)
-    right_motor.hold() # Right stops (holds its position)
+    left_motor.stop() # Left stops (stops its position)
+    right_motor.stop() # Right stops (stops its position)
     wait(100) # Wait for 100 milliseconds
  
 def attachment_right_move(a_angle, a_speed = 400, a_timeout=None): # Creates a function named attachment_right_move for the right motor
     if a_timeout != None: # Check if a a_timeout limit is provided
         a_timeout_watch = StopWatch() # Create a stopwatch object for the a_timeout
         a_timeout_watch.resume() # Start the stopwatch
-        attachment_right.run_angle(a_speed, a_angle * left_gear_ratio, wait=False) # Start moving right attachment in the background
-        while abs(attachment_right.angle()-(a_angle * right_gear_ratio)) > 1: # Loop until target angle is reached
+        attachment_right.run_angle(a_speed, a_angle, wait=True) # Start moving right attachment in the background
+        while abs(attachment_right.angle()-(a_angle)) > 1: # Loop until target angle is reached
             if a_timeout_watch.time() >= a_timeout: break # Break if a_timeout occurs
     else: # If no a_timeout is specified
-        attachment_right.run_angle(a_speed, a_angle * left_gear_ratio) # Runs attachment_right in degrees and waits for completion
+        attachment_right.run_angle(a_speed, a_angle) # Runs attachment_right in degrees and waits for completion
 
 def attachment_left_move(a_angle, a_speed = 400, a_timeout = None): # Creates a function named attachment_left_move for the left motor
     if a_timeout != None: # Check if a a_timeout limit is provided
         a_timeout_watch = StopWatch() # Create a stopwatch object for the a_timeout
         a_timeout_watch.resume() # Start the stopwatch
-        attachment_left.run_angle(a_speed, a_angle * left_gear_ratio, wait=False) # Start moving left attachment in the background
-        while abs(attachment_left.angle()-(a_angle * left_gear_ratio)) > 1: # Loop until target angle is reached
+        attachment_left.run_angle(a_speed, a_angle, wait=True) # Start moving left attachment in the background
+        while abs(attachment_left.angle()-(a_angle)) > 1: # Loop until target angle is reached
             if a_timeout != None and a_timeout_watch.time() >= a_timeout: break # Break if a_timeout occurs
     else: # If no a_timeout is specified
-        attachment_left.run_angle(a_speed, a_angle * left_gear_ratio) # Runs attachment_left in degrees and waits for completion
+        attachment_left.run_angle(a_speed, a_angle) # Runs attachment_left in degrees and waits for completion
         
 def attachment_right_background(a_angle, a_speed = 400): # Creates a function named attachment_right_background for non-blocking movement
-    attachment_right.run_angle(a_speed, a_angle * right_gear_ratio, wait=False) # Runs attachment_right in degrees and does not wait
+    attachment_right.run_angle(a_speed, a_angle, wait=False) # Runs attachment_right in degrees and does not wait
  
 def attachment_left_background(a_angle, a_speed = 400): # Creates a function named attachment_left_background for non-blocking movement
-    attachment_left.run_angle(a_speed, a_angle * left_gear_ratio, wait=False) # Runs attachment_left in degrees and does not wait
+    attachment_left.run_angle(a_speed, a_angle, wait=False) # Runs attachment_left in degrees and does not wait
  
 hub.system.set_stop_button(Button.BLUETOOTH) # Sets the stop button to the bluetooth button
 hub.display.number(1) # Displays number 1, as run 1 starts
@@ -115,19 +113,23 @@ print(voltage) # Prints the battery voltage to the console
 def run_1(): # Creates a function named run_1
     hub.imu.reset_heading(0) # Sets gyro value to 0
     wait(200) # Wait for 200 milliseconds
+    #rest of the code comes here
  
 def run_2(): # Creates a function named run_2
     hub.imu.reset_heading(0) # Sets gyro value to 0
     wait(200) # Wait for 200 milliseconds
+    #rest of the code comes here
  
 def run_3(): # Creates a function named run_3
     hub.imu.reset_heading(0) # Sets gyro value to 0
     wait(200) # Wait for 200 milliseconds
-    
+    #rest of the code comes here
+
 def run_4(): # Creates a function named run_4
     hub.imu.reset_heading(0) # Sets gyro value to 0
     wait(200) # Wait for 200 milliseconds
-
+    #rest of the code comes here
+    
 current_run = 0 # Creates a variable named current_run with a value of 0, which counts the run number
 runs = [run_1, run_2, run_3, run_4] # Creates an array named runs and specifies its elements
 max_runs = len(runs) # Creates max_runs and its value is the number of elements in runs
